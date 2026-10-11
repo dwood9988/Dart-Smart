@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>Dart Smart</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#e6ecf1; --card:#fbfcfd; --ink:#16202b; --muted:#5b6b78; --line:#cdd7de; --chip:#dde6ec;
+  --accent:#2457c5; --onaccent:#ffffff; --good:#17794a; --bad:#c0302a;
+  --body:"Barlow",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --num:"Barlow Condensed","Arial Narrow","Roboto Condensed",Impact,sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#17232b; --card:#1f2f39; --ink:#ecf2f5; --muted:#9db0bc; --line:#32454f; --chip:#2a3b46;
+    --accent:#6c9bff; --onaccent:#0c1a2e; --good:#5fd39b; --bad:#ff8a82;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#17232b; --card:#1f2f39; --ink:#ecf2f5; --muted:#9db0bc; --line:#32454f; --chip:#2a3b46;
+  --accent:#6c9bff; --onaccent:#0c1a2e; --good:#5fd39b; --bad:#ff8a82;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px);-webkit-text-size-adjust:100%}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.4 var(--body);min-height:100vh}
+.app{max-width:520px;margin:0 auto;padding:14px 14px 48px}
+h1{font:700 34px/1 var(--num);margin:10px 0 6px;letter-spacing:.2px}
+p{margin:0 0 10px}
+.muted{color:var(--muted)}
+.tagline{font:600 22px/1.2 var(--num);color:var(--accent);margin:0 0 6px;letter-spacing:.2px}
+.sm{font-size:14px}
+button{font:inherit;cursor:pointer;color:inherit}
+button:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;margin:12px 0}
+.lbl{font-weight:600;margin:14px 0 6px}
+.lbl:first-child{margin-top:0}
+.seg{display:flex;gap:6px}
+.seg button{flex:1;min-height:46px;border:1px solid var(--line);background:var(--chip);border-radius:8px;font:700 19px var(--num);letter-spacing:.3px;padding:0 4px}
+.seg button.on{background:var(--accent);border-color:var(--accent);color:var(--onaccent)}
+.names{display:flex;gap:8px}
+.names input{flex:1;min-width:0;font:600 18px var(--body);border:2px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);padding:8px 10px;min-height:46px}
+.primary{background:var(--accent);color:var(--onaccent);border:0;border-radius:8px;min-height:48px;padding:0 20px;font:700 22px var(--num);letter-spacing:.3px}
+.primary.wide{width:100%;margin-top:12px}
+.ghost{background:transparent;border:1px solid var(--line);border-radius:8px;min-height:40px;padding:0 12px;font-size:15px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.ttl{font:700 26px var(--num)}
+.rules{text-align:center;color:var(--muted);font-size:14px;margin-top:2px}
+.hud{display:flex;justify-content:space-between;align-items:flex-end;gap:8px;margin:8px 0 6px}
+.pl{padding:4px 8px;border:2px solid transparent;border-radius:8px;min-width:0}
+.hud.two .pl{flex:1}
+.pl.on{border-color:var(--accent);background:var(--card)}
+.pn{font:600 16px var(--body);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.big{font:700 64px/0.95 var(--num)}
+.hud.two .big{font-size:54px}
+.tag{display:inline-block;margin-top:4px;font-size:13px;font-weight:600;color:var(--bad);border:1px solid var(--bad);border-radius:6px;padding:0 6px}
+.mini{display:flex;gap:16px}
+.mini div{text-align:right}
+.mini b{display:block;font:700 26px/1 var(--num)}
+.mini span{font-size:13px;color:var(--muted)}
+.turn{text-align:center;font:700 24px var(--num);color:var(--accent);margin:4px 0 0}
+.boardbox{width:100%;max-width:340px;margin:6px auto 0}
+.boardbox svg{display:block;width:100%;height:auto}
+.dart{transform-box:fill-box;transform-origin:center;animation:land .35s cubic-bezier(.2,.9,.3,1) both}
+@keyframes land{from{opacity:0;transform:scale(3.2)}to{opacity:1;transform:scale(1)}}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.legend{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;font-size:14px;color:var(--muted);margin:8px 0 4px}
+.chips{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:6px}
+.chip{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--muted);border-radius:8px;padding:5px 12px 5px 8px;font:700 24px/1.1 var(--num);animation:fade .3s both;display:flex;align-items:center;gap:8px}
+.chip i{font:600 13px var(--body);font-style:normal;color:var(--muted)}
+.c-t{border-left-color:#c8312b}.c-d{border-left-color:#1f9a62}.c-s{border-left-color:#8d99a3}
+.c-bull,.c-outer{border-left-color:#e0a81a}.c-miss{border-left-color:transparent;color:var(--muted)}
+.chipnote{width:100%;text-align:center;font-size:14px;color:var(--muted)}
+.q{font-weight:500;font-size:18px}
+.row{display:flex;gap:8px;margin:8px 0}
+.row input{flex:1;min-width:0;font:700 34px var(--num);text-align:center;border:2px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);padding:2px 10px;min-height:54px}
+.row2{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.fb{margin:6px 0;font-weight:600}
+.fb.no{color:var(--bad)}
+.note{font-weight:600;margin-bottom:8px}
+.note.ok{color:var(--good)}
+.hint{background:var(--chip);border-radius:8px;padding:10px 12px;margin-top:10px;font-size:16px}
+.res{font:600 22px/1.3 var(--body);margin:2px 0 10px}
+.res b{font:700 34px var(--num)}
+.res.win{color:var(--good)}
+.res.bust{color:var(--bad)}
+.lines{font-size:16px;margin:0 0 10px;padding:0;list-style:none}
+.lines li{padding:3px 0;border-bottom:1px solid var(--line)}
+.tiles{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin:6px 0}
+.tile{background:var(--chip);border-radius:8px;padding:6px 2px;text-align:center;border:2px solid transparent}
+.tile.bad{border-color:var(--bad)}
+.tnum{font:700 20px/1 var(--num)}
+.tg{font-size:22px;height:30px;line-height:30px}
+.topp{font-size:11px;color:var(--muted);height:14px;font-weight:600;white-space:nowrap}
+.topp.cl{color:var(--bad)}
+.tile button{width:100%;height:40px;border:1px solid var(--line);border-radius:6px;background:var(--card);font:700 22px var(--num);padding:0}
+.tadd{font:700 26px/1.5 var(--num)}
+@media (prefers-reduced-motion:reduce){.dart,.chip{animation:none}}
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+<script>
+var SEG=[20,1,18,4,13,6,10,15,2,17,3,19,7,16,8,11,14,9,12,5];
+var CR=[20,19,18,17,16,15,25];
+var GL=['–','/','✕','⊗'];
+var SIG={easy:10,medium:19,hard:29};
+var $=function(s){return document.querySelector(s);};
+var esc=function(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});};
+var nm=function(n){return n===25?'Bull':String(n);};
+
+var S={mode:'501',diff:'medium',start:501,players:1,dIn:false,dOut:true,names:['Player 1','Player 2']};
+try{var saved=JSON.parse(localStorage.getItem('dmt2')||'null');if(saved){S=Object.assign(S,saved);}}catch(e){}
+if(!Array.isArray(S.names)||S.names.length<2)S.names=['Player 1','Player 2'];
+function saveS(){try{localStorage.setItem('dmt2',JSON.stringify(S));}catch(e){}}
+var G=null;
+
+/* ---------- board geometry ---------- */
+function pol(r,deg){var a=deg*Math.PI/180;return [r*Math.sin(a),-r*Math.cos(a)];}
+function wedge(r1,r2,a1,a2){
+  var p1=pol(r2,a1),p2=pol(r2,a2),p3=pol(r1,a2),p4=pol(r1,a1);
+  function f(v){return v.toFixed(2);}
+  return 'M'+f(p1[0])+' '+f(p1[1])+'A'+r2+' '+r2+' 0 0 1 '+f(p2[0])+' '+f(p2[1])+'L'+f(p3[0])+' '+f(p3[1])+'A'+r1+' '+r1+' 0 0 0 '+f(p4[0])+' '+f(p4[1])+'Z';
+}
+function classify(x,y){
+  var r=Math.hypot(x,y),o;
+  if(r>170) o={kind:'miss',num:0,mult:0,value:0,label:'Miss',dbl:false};
+  else if(r<=6.35) o={kind:'bull',num:25,mult:2,value:50,label:'Bull',dbl:true};
+  else if(r<=15.9) o={kind:'outer',num:25,mult:1,value:25,label:'Outer bull',dbl:false};
+  else{
+    var ang=Math.atan2(x,-y)*180/Math.PI; if(ang<0)ang+=360;
+    var n=SEG[Math.floor(((ang+9)%360)/18)];
+    var mult=1; if(r>=99&&r<=107)mult=3; else if(r>=162)mult=2;
+    o={kind:'seg',num:n,mult:mult,value:n*mult,label:(mult===3?'T':mult===2?'D':'S')+n,dbl:mult===2};
+  }
+  o.x=x;o.y=y;return o;
+}
+function boardSVG(darts){
+  var s='<svg viewBox="-200 -200 400 400" role="img" aria-label="Dartboard with the darts that just landed">';
+  s+='<circle r="199" fill="#121212"/>';
+  for(var i=0;i<20;i++){
+    var a1=i*18-9,a2=i*18+9,dark=i%2===0;
+    var single=dark?'#1a1a1a':'#f1e6c4',ring=dark?'#c8312b':'#1f8a57';
+    s+='<path d="'+wedge(15.9,99,a1,a2)+'" fill="'+single+'"/>';
+    s+='<path d="'+wedge(99,107,a1,a2)+'" fill="'+ring+'"/>';
+    s+='<path d="'+wedge(107,162,a1,a2)+'" fill="'+single+'"/>';
+    s+='<path d="'+wedge(162,170,a1,a2)+'" fill="'+ring+'"/>';
+    var t=pol(186,i*18);
+    s+='<text x="'+t[0].toFixed(1)+'" y="'+t[1].toFixed(1)+'" text-anchor="middle" dominant-baseline="central" fill="#f4f4f4" font-size="19" font-weight="700" font-family="Barlow Condensed,Arial Narrow,sans-serif">'+SEG[i]+'</text>';
+  }
+  s+='<circle r="15.9" fill="#1f8a57"/><circle r="6.35" fill="#c8312b"/>';
+  s+='<g fill="none" stroke="#9aa3aa" stroke-width=".6" opacity=".75">';
+  [6.35,15.9,99,107,162,170].forEach(function(r){s+='<circle r="'+r+'"/>';});
+  for(var j=0;j<20;j++){var a=pol(15.9,j*18-9),b=pol(170,j*18-9);s+='<line x1="'+a[0].toFixed(1)+'" y1="'+a[1].toFixed(1)+'" x2="'+b[0].toFixed(1)+'" y2="'+b[1].toFixed(1)+'"/>';}
+  s+='</g>';
+  darts.forEach(function(d,i){
+    var x=d.x,y=d.y,r=Math.hypot(x,y); if(r>190){x*=190/r;y*=190/r;}
+    s+='<g class="dart" style="animation-delay:'+(i*0.5)+'s"><circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="8" fill="#ffd23f" stroke="#111" stroke-width="1.6"/>';
+    s+='<text x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="800" fill="#111" font-family="Barlow,Arial,sans-serif">'+(i+1)+'</text></g>';
+  });
+  return s+'</svg>';
+}
+
+/* ---------- players ---------- */
+function P(){return G.players[G.cur];}
+function O(){return G.players.length===2?G.players[1-G.cur]:null;}
+function oppBlocked(n){var o=O();return o?o.marks[n]>=3:G.bot.has(n);}
+function oppName(){var o=O();return o?o.name:'the opponent';}
+function closedAll(p){return CR.every(function(n){return p.marks[n]>=3;});}
+
+/* ---------- throwing ---------- */
+function gauss(){var u=0;while(u===0)u=Math.random();var v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
+function aimPoint(kind,n){
+  if(n===25)return [0,0];
+  var a=SEG.indexOf(n)*18,r=kind==='T'?103:kind==='D'?166:135;
+  return pol(r,a);
+}
+function rnd20(){return 1+Math.floor(Math.random()*20);}
+function aim501(running,isIn){
+  var r=Math.random();
+  if(!isIn){
+    if(S.diff==='easy')return aimPoint('D',rnd20());
+    if(S.diff==='medium'){
+      if(r<.4)return aimPoint('D',20);
+      if(r<.6)return aimPoint('D',16);
+      if(r<.75)return aimPoint('D',10);
+      if(r<.9)return [0,0];
+      return aimPoint('D',rnd20());
+    }
+    if(r<.15)return [0,0];
+    return aimPoint('D',rnd20());
+  }
+  if(G.rules.dOut){
+    if(running<=40&&running%2===0)return aimPoint('D',running/2);
+    if(running<=40)return aimPoint('S',1);
+  }else{
+    if(running<=20)return aimPoint('S',running);
+    if(running<=40)return running%2===0?aimPoint('D',running/2):aimPoint('S',running-20);
+  }
+  if(running<=60)return aimPoint('S',running-40);
+  if(S.diff==='easy')return aimPoint('S',rnd20());
+  r=Math.random();
+  if(S.diff==='medium'){
+    if(r<.45)return aimPoint('T',20);
+    if(r<.65)return aimPoint('T',19);
+    if(r<.8)return aimPoint('T',18);
+    if(r<.9)return aimPoint('T',17);
+    return [0,0];
+  }
+  if(r<.15)return [0,0];
+  return aimPoint(Math.random()<.7?'T':'D',rnd20());
+}
+function gen501(p){
+  var darts=[],running=p.rem,isIn=p.isIn,bust=false,won=false,sig=SIG[S.diff],counted=0,dOut=G.rules.dOut;
+  for(var i=0;i<3;i++){
+    var t=aim501(running,isIn),h,tries=0;
+    do{
+      h=classify(t[0]+gauss()*sig,t[1]+gauss()*sig);tries++;
+    }while(S.diff==='easy'&&isIn&&running>60&&!(h.kind==='seg'&&h.mult===1)&&tries<40);
+    darts.push(h);
+    if(!isIn){
+      if(h.dbl){isIn=true;h.inDart=true;}
+      else{h.counts=false;continue;}
+    }
+    h.counts=true;
+    counted+=h.value;
+    var nr=running-h.value;
+    if(nr<0||(dOut&&(nr===1||(nr===0&&!h.dbl)))){bust=true;break;}
+    running=nr;
+    if(nr===0){won=true;break;}
+  }
+  return {darts:darts,total:counted,bust:bust,won:won,startRem:p.rem,startIn:p.isIn,
+          newScore:bust?p.rem:p.rem-counted,newIn:bust?p.isIn:isIn};
+}
+function crMarks(h){
+  if(h.kind==='bull')return [25,2];
+  if(h.kind==='outer')return [25,1];
+  if(h.kind==='seg'&&CR.indexOf(h.num)>=0)return [h.num,h.mult];
+  return [0,0];
+}
+function genCricket(){
+  var p=P(),sig=SIG[S.diff];
+  var open=CR.filter(function(n){return p.marks[n]<3;}),pool;
+  if(open.length)pool=open;
+  else{pool=CR.filter(function(n){return !oppBlocked(n);});if(!pool.length)pool=CR;}
+  var darts=[],exp={};CR.forEach(function(n){exp[n]=0;});
+  for(var i=0;i<3;i++){
+    var n=pool[Math.floor(Math.random()*pool.length)],t=aimPoint('T',n);
+    var h=classify(t[0]+gauss()*sig,t[1]+gauss()*sig);
+    h.cm=crMarks(h);darts.push(h);
+    if(h.cm[0])exp[h.cm[0]]+=h.cm[1];
+  }
+  var detail=CR.map(function(n){
+    var before=p.marks[n],add=exp[n],sc=Math.max(0,before+add-3),blocked=oppBlocked(n);
+    return {n:n,before:before,add:add,sc:sc,blocked:blocked,pts:blocked?0:sc*n};
+  });
+  var points=detail.reduce(function(s,d){return s+d.pts;},0);
+  return {darts:darts,exp:exp,detail:detail,points:points};
+}
+
+/* ---------- text helpers ---------- */
+function describe501(d){
+  var base=d.kind==='miss'?'Miss = 0':d.kind==='bull'?'Bull = 50':d.kind==='outer'?'Outer bull = 25':d.mult===1?d.label+' = '+d.num:d.label+' = '+d.mult+' × '+d.num+' = '+d.value;
+  if(d.counts===false)return d.kind==='miss'?'Miss = 0, no double yet':base+', but it doesn\'t count (no double yet)';
+  if(d.inDart)return base+'. Doubled in! It counts.';
+  return base;
+}
+function describeCR(d){
+  var n=d.cm[0],m=d.cm[1];
+  if(d.kind==='miss')return 'Miss = no marks';
+  if(!n)return d.label+' = no marks ('+d.num+' isn\'t in play)';
+  return d.label+' = '+m+' mark'+(m>1?'s':'')+' on '+nm(n);
+}
+function chipsHTML(darts){
+  var h=darts.map(function(d,i){
+    var cls=d.kind==='seg'?({1:'s',2:'d',3:'t'})[d.mult]:d.kind;
+    return '<div class="chip c-'+cls+'" style="animation-delay:'+(i*0.5+0.15)+'s"><i>'+(i+1)+'</i>'+esc(d.label)+'</div>';
+  }).join('');
+  if(darts.length<3)h+='<div class="chipnote">Only '+darts.length+' dart'+(darts.length>1?'s':'')+' thrown this round.</div>';
+  return h;
+}
+function rulesLine(){
+  var r='Round '+G.round;
+  if(S.mode==='501'){
+    var a=G.rules.dIn,b=G.rules.dOut;
+    r+=', '+(a&&b?'double in and double out':a?'double in, straight out':b?'double out':'straight in, straight out');
+  }
+  return r;
+}
+
+/* ---------- setup screen ---------- */
+function segBtns(id,items,cur){
+  return '<div class="seg" id="'+id+'">'+items.map(function(it){return '<button data-v="'+it[0]+'" class="'+(String(cur)===String(it[0])?'on':'')+'">'+it[1]+'</button>';}).join('')+'</div>';
+}
+function setupHTML(){
+  var diffText={easy:'Steady throws. Mostly single hits.',medium:'Some wobble. A mix of singles, doubles and triples.',hard:'Wild throws. Lots of doubles, triples and misses.'};
+  var h='<h1>Dart Smart</h1><p class="tagline">Throw more, stress less.</p><p class="muted">Random darts land on the board. You work out the score.</p>';
+  h+='<div class="card"><div class="lbl">Game</div>'+segBtns('segMode',[['501','501'],['cricket','Cricket']],S.mode);
+  h+='<div class="lbl">Players</div>'+segBtns('segPlayers',[[1,'1 player'],[2,'2 players']],S.players);
+  if(S.players===2){
+    h+='<div class="lbl">Names</div><div class="names"><input id="n0" maxlength="14" aria-label="Player 1 name" value="'+esc(S.names[0])+'"><input id="n1" maxlength="14" aria-label="Player 2 name" value="'+esc(S.names[1])+'"></div>';
+  }
+  if(S.mode==='501'){
+    h+='<div class="lbl">Starting score</div>'+segBtns('segStart',[[501,'501'],[301,'301'],[101,'101 (quick)']],S.start);
+    h+='<div class="lbl">Getting started</div>'+segBtns('segIn',[[0,'Straight in'],[1,'Double in']],S.dIn?1:0);
+    h+='<div class="lbl">Finishing</div>'+segBtns('segOut',[[0,'Straight out'],[1,'Double out']],S.dOut?1:0);
+  }
+  h+='<div class="lbl">Difficulty</div>'+segBtns('segDiff',[['easy','Easy'],['medium','Medium'],['hard','Hard']],S.diff);
+  h+='<p class="muted sm" style="margin-top:8px">'+diffText[S.diff]+'</p>';
+  h+='<button class="primary wide" id="go">Start game</button></div>';
+  h+='<div class="card sm">';
+  if(S.mode==='501'){
+    h+='<b>How 501 works.</b> Each round, add up the darts that count, then subtract from your score. Get to exactly 0 to win. ';
+    h+='<b>Double in:</b> your score doesn\'t start until you hit a double (or the bull), so darts before that count for nothing. ';
+    h+='<b>Double out:</b> you must finish on a double, and going below 0 or being left on 1 is a bust. Any bust puts your score back to where it started the round.';
+  }else{
+    h+='<b>How Cricket works.</b> Close 20, 19, 18, 17, 16, 15 and Bull with 3 marks each. Single = 1 mark, double = 2, triple = 3. Outer bull = 1 mark, bull = 2. Extra marks on a number you\'ve closed score its value (25 for Bull), unless your opponent has closed it too. ';
+    h+=S.players===2?'Close all seven while level or ahead on points to win.':'Here the opponent closes a number every second round.';
+  }
+  if(S.players===2)h+=' <b>Two players:</b> pass the phone each turn. Everyone works out their own throws.';
+  h+='</div>';
+  return h;
+}
+function bindSetup(){
+  function wire(id,fn){
+    var el=document.querySelectorAll('#'+id+' button');
+    for(var i=0;i<el.length;i++){(function(b){b.onclick=function(){fn(b.dataset.v);saveS();render();};})(el[i]);}
+  }
+  wire('segMode',function(v){S.mode=v;});
+  wire('segPlayers',function(v){S.players=+v;});
+  wire('segStart',function(v){S.start=+v;});
+  wire('segIn',function(v){S.dIn=+v===1;});
+  wire('segOut',function(v){S.dOut=+v===1;});
+  wire('segDiff',function(v){S.diff=v;});
+  [0,1].forEach(function(i){var el=$('#n'+i);if(el)el.oninput=function(){S.names[i]=el.value;saveS();};});
+  $('#go').onclick=newGame;
+}
+
+/* ---------- game flow ---------- */
+function newGame(){
+  var np=S.players;
+  G={round:0,cur:0,players:[],attempts:0,hint:false,hintUsed:false,fb:'',fbc:'',lastVal:'',wrong:[],note:'',oppMsg:'',
+     over:false,winner:-1,rules:{dIn:S.dIn,dOut:S.dOut}};
+  for(var i=0;i<np;i++){
+    var marks={};CR.forEach(function(n){marks[n]=0;});
+    var nmv=np===2?((S.names[i]||'').trim()||'Player '+(i+1)):'You';
+    G.players.push({name:nmv,rem:S.start,isIn:!S.dIn,marks:marks,score:0,q:0,ft:0,streak:0,best:0});
+  }
+  if(S.mode==='cricket'&&np===1)G.bot=new Set();
+  startTurn(true);
+}
+function startTurn(first){
+  if(first){G.cur=0;G.round=1;}
+  else{G.cur=(G.cur+1)%G.players.length;if(G.cur===0)G.round++;}
+  G.attempts=0;G.hint=false;G.hintUsed=false;G.fb='';G.fbc='';G.lastVal='';G.wrong=[];G.note='';G.oppMsg='';
+  if(S.mode==='501'){G.turn=gen501(P());G.step='total';}
+  else{G.turn=genCricket();G.step='marks';G.add={};CR.forEach(function(n){G.add[n]=0;});}
+  render();
+  window.scrollTo(0,0);
+}
+function toMenu(){G=null;render();window.scrollTo(0,0);}
+function render(){
+  var app=$('#app');
+  if(!G){app.innerHTML=setupHTML();bindSetup();return;}
+  var np=G.players.length;
+  app.innerHTML='<div class="top"><button class="ghost" id="menu">Menu</button><div class="ttl">'+(S.mode==='501'?S.start:'Cricket')+'</div><div style="width:64px"></div></div>'+
+    '<div class="rules">'+rulesLine()+'</div>'+
+    '<div class="hud'+(np===2?' two':'')+'" id="hud"></div>'+
+    (np===2?'<div class="turn">'+esc(P().name)+'\'s turn</div>':'')+
+    '<div class="boardbox">'+boardSVG(G.turn.darts)+'</div>'+
+    '<div class="legend"><span>S = single</span><span>D = double (×2)</span><span>T = triple (×3)</span></div>'+
+    '<div class="chips">'+chipsHTML(G.turn.darts)+'</div>'+
+    '<div class="card" id="panel"></div>';
+  $('#menu').onclick=toMenu;
+  renderPanel();
+}
+function hud(){
+  var np=G.players.length,is501=S.mode==='501';
+  var h=G.players.map(function(p,i){
+    var acc=p.q?Math.round(100*p.ft/p.q)+'%':'–';
+    var big=is501?p.rem:p.score,lab=is501?'remaining':'points';
+    var tag=(is501&&G.rules.dIn&&!p.isIn)?'<div class="tag">needs a double</div>':'';
+    var name=np===2?'<div class="pn">'+esc(p.name)+'</div>':'';
+    var sub='<div class="muted sm">'+lab+(np===2?', '+acc+' first try':'')+'</div>';
+    return '<div class="pl'+(np===2&&i===G.cur?' on':'')+'">'+name+'<div class="big">'+big+'</div>'+sub+tag+'</div>';
+  }).join('');
+  if(np===1){
+    var p=G.players[0],acc1=p.q?Math.round(100*p.ft/p.q)+'%':'–';
+    h+='<div class="mini"><div><b>'+G.round+'</b><span>round</span></div><div><b>'+acc1+'</b><span>first try</span></div><div><b>'+p.streak+'</b><span>streak</span></div></div>';
+  }
+  $('#hud').innerHTML=h;
+}
+function resolve(good){
+  var p=P(),first=good&&G.attempts===0&&!G.hintUsed;
+  p.q++;
+  if(first){p.ft++;p.streak++;p.best=Math.max(p.best,p.streak);}else p.streak=0;
+  G.attempts=0;G.hint=false;G.hintUsed=false;G.fb='';G.fbc='';G.lastVal='';G.wrong=[];
+}
+function wrongAns(v,exp){
+  G.attempts++;G.fbc='no';
+  G.fb='Not quite. '+v+' is a bit '+(v>exp?'high':'low')+'. Try again.';
+}
+function inputRow(){
+  return '<div class="row"><input id="ans" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="?" aria-label="Your answer" value="'+esc(G.lastVal)+'"><button class="primary" id="chk">Check</button></div>';
+}
+function fbH(){return G.fb?'<div class="fb '+G.fbc+'">'+G.fb+'</div>':'';}
+function helpH(txt){
+  return '<div class="row2"><button class="ghost" id="hintbtn">'+(G.hint?'Hide hint':'Need a hint?')+'</button>'+(G.attempts>=2?'<button class="ghost" id="reveal">Show answer</button>':'')+'</div>'+(G.hint?'<div class="hint">'+txt+'</div>':'');
+}
+function summaryHTML(){
+  return '<ul class="lines">'+G.players.map(function(p){
+    var a=p.q?Math.round(100*p.ft/p.q)+'% right first try':'no answers yet';
+    return '<li><b>'+esc(p.name)+'</b>: '+a+', best streak '+p.best+(S.mode==='cricket'?', '+p.score+' points':'')+'</li>';
+  }).join('')+'</ul>';
+}
+function nextBtn(){
+  var np=G.players.length;
+  if(np===2)return '<button class="primary wide" id="next">Pass to '+esc(G.players[1-G.cur].name)+'</button>';
+  return '<button class="primary wide" id="next">Next round</button>';
+}
+function overButtons(){return '<div class="row2"><button class="primary" id="again">Play again</button><button class="ghost" id="menu2">Menu</button></div>';}
+function bustRules(){
+  return G.rules.dOut
+    ?'Bust rules: you can\'t go below 0, can\'t be left on 1, and must finish on a double. After a bust your score goes back to what it was.'
+    :'Bust rule: going below 0 is a bust, and your score goes back to what it was. Land exactly on 0 to win.';
+}
+
+/* ---------- 501 panel ---------- */
+function panel501(){
+  var t=G.turn,p=P(),h='';
+  if(G.note)h+='<div class="note ok">'+G.note+'</div>';
+  if(G.step==='total'){
+    h+='<p class="q">'+(t.startIn?'Add up the darts. What\'s the round total?':'You haven\'t doubled in yet, so only darts from your first double count. What\'s the round total?')+'</p>';
+    h+=inputRow()+fbH()+helpH(t.darts.map(describe501).map(esc).join('<br>'));
+  }else if(G.step==='score'){
+    h+='<p class="q">You started this round on <b>'+t.startRem+'</b>. What\'s your score now?</p>';
+    h+='<p class="muted sm">'+bustRules()+'</p>';
+    h+=inputRow()+fbH()+helpH(t.startRem+' − '+t.total+' = ?<br>Then check the bust rules.');
+  }else{
+    var naive=t.startRem-t.total,ar;
+    if(t.bust){
+      var why=naive<0?t.startRem+' − '+t.total+' would go below zero.':naive===1?t.startRem+' − '+t.total+' would leave you on 1, and you can\'t finish from 1.':'That reaches 0, but the last dart wasn\'t a double.';
+      ar='<div class="res bust">Bust. '+why+' Your score stays at '+t.startRem+'.</div>';
+    }else if(!t.startIn&&t.total===0){
+      ar='<div class="res">No double yet, so nothing counts. Still on <b>'+t.startRem+'</b>.</div>';
+    }else{
+      ar='<div class="res">'+(!t.startIn?'Doubled in! ':'')+t.startRem+' − '+t.total+' = <b>'+t.newScore+'</b></div>';
+    }
+    h+=ar;
+    if(G.over){
+      var how=G.rules.dOut?' on a double':'';
+      h+='<div class="res win">'+(G.players.length===2?esc(p.name)+' wins! Checked out'+how+'.':'Checkout! You finished'+how+'.')+'</div>';
+      h+=summaryHTML()+overButtons();
+    }else h+=nextBtn();
+  }
+  return h;
+}
+function check501(){
+  var inp=$('#ans'),v=parseInt(inp.value,10),t=G.turn;
+  if(isNaN(v)){G.fb='Type a number first.';G.fbc='no';return;}
+  G.lastVal=inp.value;
+  if(G.step==='total'){
+    if(v===t.total){resolve(true);G.step='score';G.note='Round total: '+t.total;}
+    else wrongAns(v,t.total);
+  }else{
+    if(v===t.newScore){resolve(true);finish501();}
+    else if(t.bust&&v===t.startRem-t.total){resolve(false);finish501();}
+    else wrongAns(v,t.newScore);
+  }
+}
+function finish501(){
+  var t=G.turn,p=P();
+  p.rem=t.newScore;p.isIn=t.newIn;G.step='done';G.note='';
+  if(t.won){G.over=true;G.winner=G.cur;}
+}
+
+/* ---------- cricket panel ---------- */
+function tilesHTML(locked){
+  var p=P(),o=O();
+  return '<div class="tiles">'+CR.map(function(n){
+    var bad=G.wrong.indexOf(n)>=0,opp;
+    if(o){var m=o.marks[n];opp='<div class="topp'+(m>=3?' cl':'')+'">opp '+GL[m]+'</div>';}
+    else opp='<div class="topp cl">'+(G.bot.has(n)?'opp ⊗':'')+'</div>';
+    return '<div class="tile'+(bad?' bad':'')+'"><div class="tnum">'+nm(n)+'</div><div class="tg">'+GL[p.marks[n]]+'</div>'+opp+
+      (locked?'':'<button data-n="'+n+'" data-d="1" aria-label="Add a mark on '+nm(n)+'">+</button>')+
+      '<div class="tadd">'+(locked?(G.add[n]?'+'+G.add[n]:'0'):G.add[n])+'</div>'+
+      (locked?'':'<button data-n="'+n+'" data-d="-1" aria-label="Remove a mark on '+nm(n)+'">−</button>')+'</div>';
+  }).join('')+'</div>';
+}
+function panelCR(){
+  var t=G.turn,p=P(),h='';
+  if(G.step==='marks'){
+    h+='<p class="q">Tally the marks from all three darts. Use + and − under each number.</p>'+tilesHTML(false);
+    h+='<p class="muted sm">The symbol is your marks so far. Below it is your opponent\'s; red means they\'ve closed it, so no points there.</p>';
+    h+='<button class="primary wide" id="chk">Check marks</button>'+fbH()+helpH(t.darts.map(describeCR).map(esc).join('<br>'));
+  }else if(G.step==='points'){
+    h+=tilesHTML(true)+'<p class="q">How many points did this round score?</p>';
+    h+='<p class="muted sm">Once a number is closed (3 marks), each extra mark scores its value, unless your opponent has closed it too. Bull is worth 25.</p>';
+    var hl=t.detail.filter(function(d){return d.add>0;}).map(function(d){
+      if(d.sc===0)return nm(d.n)+': you had '+d.before+', added '+d.add+'. No marks past three.';
+      if(d.blocked)return nm(d.n)+': '+oppName()+' closed it, so no points.';
+      return nm(d.n)+': '+d.sc+' mark'+(d.sc>1?'s':'')+' past three × '+d.n+' = ?';
+    });
+    h+=inputRow()+fbH()+helpH(hl.length?hl.map(esc).join('<br>'):'No marks were added, so nothing to score.');
+  }else{
+    var lines=t.detail.filter(function(d){return d.add>0;}).map(function(d){
+      if(d.sc>0&&d.blocked)return '<li>'+nm(d.n)+': '+esc(oppName())+' closed it, no points</li>';
+      if(d.sc>0)return '<li>'+nm(d.n)+': '+d.sc+' extra × '+d.n+' = '+d.pts+'</li>';
+      return '<li>'+nm(d.n)+': '+Math.min(3,d.before+d.add)+' of 3 marks</li>';
+    }).join('');
+    h+='<div class="res">Round score: <b>'+t.points+'</b></div>';
+    if(lines)h+='<ul class="lines">'+lines+'</ul>';
+    if(G.oppMsg)h+='<p class="muted sm">'+G.oppMsg+'</p>';
+    if(G.over){
+      if(G.players.length===1)h+='<div class="res win">All seven numbers closed!</div>';
+      else if(G.winner>=0)h+='<div class="res win">'+esc(G.players[G.winner].name)+' wins!</div>';
+      else h+='<div class="res">It\'s a tie!</div>';
+      h+=summaryHTML()+overButtons();
+    }else h+=nextBtn();
+  }
+  return h;
+}
+function checkCR(){
+  var t=G.turn;
+  if(G.step==='marks'){
+    var bad=CR.filter(function(n){return G.add[n]!==t.exp[n];});
+    if(!bad.length){resolve(true);G.step='points';}
+    else{G.attempts++;G.fbc='no';G.fb='Not quite. Recount the marks for each dart.';if(G.attempts>=2)G.wrong=bad;}
+  }else{
+    var inp=$('#ans'),v=parseInt(inp.value,10);
+    if(isNaN(v)){G.fb='Type a number first.';G.fbc='no';return;}
+    G.lastVal=inp.value;
+    if(v===t.points){resolve(true);finishCR();}
+    else wrongAns(v,t.points);
+  }
+}
+function finishCR(){
+  var t=G.turn,p=P(),o=O();
+  CR.forEach(function(n){p.marks[n]=Math.min(3,p.marks[n]+t.exp[n]);});
+  p.score+=t.points;G.oppMsg='';
+  if(!o){
+    if(G.round%2===0){
+      var c=CR.filter(function(n){return !G.bot.has(n);});
+      if(c.length){var n=c[Math.floor(Math.random()*c.length)];G.bot.add(n);G.oppMsg='The opponent just closed '+nm(n)+'.';}
+    }
+    G.over=closedAll(p);
+  }else{
+    if(closedAll(p)&&closedAll(o)){
+      G.over=true;G.winner=p.score>o.score?G.cur:o.score>p.score?1-G.cur:-1;
+    }else if(closedAll(p)&&p.score>=o.score){
+      G.over=true;G.winner=G.cur;
+    }
+  }
+  G.step='done';
+}
+
+/* ---------- shared panel wiring ---------- */
+function reveal(){
+  var t=G.turn;
+  if(S.mode==='501'){
+    if(G.step==='total'){resolve(false);G.step='score';G.note='Round total: '+t.total;}
+    else{resolve(false);finish501();}
+  }else{
+    if(G.step==='marks'){CR.forEach(function(n){G.add[n]=t.exp[n];});resolve(false);G.step='points';}
+    else{resolve(false);finishCR();}
+  }
+  renderPanel();
+}
+function onCheck(){
+  if(S.mode==='501')check501();else checkCR();
+  renderPanel();
+}
+function renderPanel(){
+  hud();
+  var p=$('#panel');
+  p.innerHTML=S.mode==='501'?panel501():panelCR();
+  var q=function(s){return p.querySelector(s);};
+  var chk=q('#chk');if(chk)chk.onclick=onCheck;
+  var ans=q('#ans');
+  if(ans){ans.onkeydown=function(e){if(e.key==='Enter')onCheck();};try{ans.focus({preventScroll:true});ans.select();}catch(e){}}
+  var hb=q('#hintbtn');if(hb)hb.onclick=function(){G.hint=!G.hint;if(G.hint)G.hintUsed=true;renderPanel();};
+  var rv=q('#reveal');if(rv)rv.onclick=reveal;
+  var nx=q('#next');if(nx)nx.onclick=function(){startTurn(false);};
+  var ag=q('#again');if(ag)ag.onclick=newGame;
+  var mn=q('#menu2');if(mn)mn.onclick=toMenu;
+  var tb=p.querySelectorAll('.tile button');
+  for(var i=0;i<tb.length;i++){(function(b){b.onclick=function(){
+    var n=+b.dataset.n;G.add[n]=Math.max(0,Math.min(9,G.add[n]+(+b.dataset.d)));renderPanel();
+  };})(tb[i]);}
+}
+render();
+</script>
+</body>
+</html>
