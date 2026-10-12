@@ -3,108 +3,146 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="color-scheme" content="light dark">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#0f3322">
 <title>Dart Smart</title>
 <link rel="apple-touch-icon" href="icon-v2.png">
 <link rel="icon" type="image/png" href="icon-v2.png">
 <meta name="apple-mobile-web-app-title" content="Dart Smart">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@600;700&family=Bevan&family=Caveat:wght@600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#e6ecf1; --card:#fbfcfd; --ink:#16202b; --muted:#5b6b78; --line:#cdd7de; --chip:#dde6ec;
-  --accent:#2457c5; --onaccent:#ffffff; --good:#17794a; --bad:#c0302a;
+  --felt:#1c5b3c; --felt3:#0f3322;
+  --wood:#8b6b45; --wood-dk:#4e3724; --wood-lt:#b58d5c;
+  --paper:#f6edd6; --paper2:#e8dcbc; --ink:#2b1d12; --ink2:#6a5846;
+  --burg:#7a1d2c; --burg2:#92283a; --burg-dk:#4a0f19;
+  --gold:#f0c24a; --cream:#f6edd6; --dim:#bfd3c1;
+  --good:#1d6b43; --bad:#a3261f;
   --body:"Barlow",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
   --num:"Barlow Condensed","Arial Narrow","Roboto Condensed",Impact,sans-serif;
+  --disp:"Bevan","Rockwell","Georgia",serif;
+  --hand:"Caveat","Bradley Hand","Segoe Print","Comic Sans MS",cursive;
   box-sizing:border-box;
   padding-top:env(safe-area-inset-top,0px);
   padding-bottom:env(safe-area-inset-bottom,0px);
 }
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    --bg:#17232b; --card:#1f2f39; --ink:#ecf2f5; --muted:#9db0bc; --line:#32454f; --chip:#2a3b46;
-    --accent:#6c9bff; --onaccent:#0c1a2e; --good:#5fd39b; --bad:#ff8a82;
-  }
-}
-:root[data-theme="dark"]{
-  --bg:#17232b; --card:#1f2f39; --ink:#ecf2f5; --muted:#9db0bc; --line:#32454f; --chip:#2a3b46;
-  --accent:#6c9bff; --onaccent:#0c1a2e; --good:#5fd39b; --bad:#ff8a82;
-}
-html{scroll-padding-top:env(safe-area-inset-top,0px);-webkit-text-size-adjust:100%}
+html{background:var(--felt3);scroll-padding-top:env(safe-area-inset-top,0px);-webkit-text-size-adjust:100%}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.4 var(--body);min-height:100vh}
+body{margin:0;min-height:100vh;color:var(--cream);--m:var(--dim);font:17px/1.4 var(--body);
+  background:
+    radial-gradient(rgba(255,255,255,.045) 1px,transparent 1.4px) 0 0/4px 4px repeat,
+    radial-gradient(ellipse 120% 70% at 50% 6%,#2b7d54 0%,var(--felt) 45%,var(--felt3) 100%) 0 0/100% 100% no-repeat,
+    var(--felt3);}
 .app{max-width:520px;margin:0 auto;padding:14px 14px 48px}
-h1{font:700 34px/1 var(--num);margin:10px 0 6px;letter-spacing:.2px}
 p{margin:0 0 10px}
-.muted{color:var(--muted)}
-.tagline{font:600 22px/1.2 var(--num);color:var(--accent);margin:0 0 6px;letter-spacing:.2px}
+.muted{color:var(--m)}
 .sm{font-size:14px}
+.center{text-align:center}
 button{font:inherit;cursor:pointer;color:inherit}
-button:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;margin:12px 0}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.card button:focus-visible,.card input:focus-visible,.card summary:focus-visible{outline-color:var(--burg)}
+
+/* home */
+.logo{width:min(80vw,300px);margin:4px auto 0}
+.logo svg{display:block;width:100%;height:auto;filter:drop-shadow(0 8px 12px rgba(0,0,0,.45))}
+.brand{font:400 46px/1 var(--disp);text-align:center;margin:8px 0 2px;color:var(--cream);text-shadow:0 2px 0 var(--felt3),0 5px 12px rgba(0,0,0,.4)}
+.tagline{font:600 30px/1.1 var(--hand);color:var(--gold);text-align:center;margin:0 0 18px}
+.gametile{position:relative;display:block;width:100%;text-align:left;margin:0 0 14px;padding:12px 56px 12px 18px;
+  background:linear-gradient(180deg,var(--burg2),var(--burg));border:3px solid var(--wood);border-radius:12px;color:var(--cream);
+  box-shadow:0 4px 0 var(--wood-dk),0 10px 16px rgba(0,0,0,.35)}
+.gametile:active{transform:translateY(2px);box-shadow:0 2px 0 var(--wood-dk),0 6px 10px rgba(0,0,0,.35)}
+.gametile::after{content:"\203A";position:absolute;right:18px;top:50%;transform:translateY(-52%);font:700 44px var(--num);color:var(--gold)}
+.gt-n{display:block;font:700 56px/1 var(--num);color:var(--gold)}
+.gt-d{display:block;font-size:15px;opacity:.92;margin-top:2px}
+
+/* cards */
+.card{background:var(--paper);color:var(--ink);--m:var(--ink2);border:3px solid var(--wood);border-radius:12px;padding:14px;margin:12px 0;
+  box-shadow:0 4px 0 var(--wood-dk),0 10px 16px rgba(0,0,0,.35)}
+details.card summary{cursor:pointer;font-weight:600;list-style:none}
+details.card summary::-webkit-details-marker{display:none}
+details.card summary::after{content:"+";float:right;font:700 26px/1 var(--num)}
+details.card[open] summary::after{content:"\2212"}
+details.card p{margin:10px 0 0}
 .lbl{font-weight:600;margin:14px 0 6px}
 .lbl:first-child{margin-top:0}
 .seg{display:flex;gap:6px}
-.seg button{flex:1;min-height:46px;border:1px solid var(--line);background:var(--chip);border-radius:8px;font:700 19px var(--num);letter-spacing:.3px;padding:0 4px}
-.seg button.on{background:var(--accent);border-color:var(--accent);color:var(--onaccent)}
+.seg button{flex:1;min-height:46px;border:2px solid var(--wood-lt);background:var(--paper2);color:var(--ink);border-radius:8px;font:700 19px var(--num);letter-spacing:.3px;padding:0 4px}
+.seg button.on{background:var(--burg);border-color:var(--burg-dk);color:var(--cream)}
 .names{display:flex;gap:8px}
-.names input{flex:1;min-width:0;font:600 18px var(--body);border:2px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);padding:8px 10px;min-height:46px}
-.primary{background:var(--accent);color:var(--onaccent);border:0;border-radius:8px;min-height:48px;padding:0 20px;font:700 22px var(--num);letter-spacing:.3px}
+.names input{flex:1;min-width:0;font:600 18px var(--body);border:2px solid var(--wood);border-radius:8px;background:#fffaf0;color:var(--ink);padding:8px 10px;min-height:46px}
+.primary{background:linear-gradient(180deg,var(--burg2),var(--burg));color:var(--cream);border:2px solid var(--wood-dk);border-radius:8px;min-height:48px;padding:0 20px;font:700 22px var(--num);letter-spacing:.3px;box-shadow:0 2px 0 var(--wood-dk)}
+.primary:active{transform:translateY(1px)}
 .primary.wide{width:100%;margin-top:12px}
-.ghost{background:transparent;border:1px solid var(--line);border-radius:8px;min-height:40px;padding:0 12px;font-size:15px}
+.ghost{background:rgba(0,0,0,.22);border:1px solid var(--wood-lt);border-radius:8px;min-height:40px;padding:0 12px;font-size:15px;color:var(--cream)}
+.card .ghost{background:transparent;border-color:var(--wood);color:var(--ink)}
+
+/* game screen */
 .top{display:flex;align-items:center;justify-content:space-between;gap:8px}
-.ttl{font:700 26px var(--num)}
-.rules{text-align:center;color:var(--muted);font-size:14px;margin-top:2px}
+.ttl{font:400 28px var(--disp);color:var(--cream)}
+.rules{text-align:center;color:var(--dim);font-size:14px;margin-top:2px}
 .hud{display:flex;justify-content:space-between;align-items:flex-end;gap:8px;margin:8px 0 6px}
 .pl{padding:4px 8px;border:2px solid transparent;border-radius:8px;min-width:0}
 .hud.two .pl{flex:1}
-.pl.on{border-color:var(--accent);background:var(--card)}
+.pl.on{border-color:var(--gold);background:rgba(0,0,0,.22)}
 .pn{font:600 16px var(--body);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .big{font:700 64px/0.95 var(--num)}
 .hud.two .big{font-size:54px}
-.tag{display:inline-block;margin-top:4px;font-size:13px;font-weight:600;color:var(--bad);border:1px solid var(--bad);border-radius:6px;padding:0 6px}
+.tag{display:inline-block;margin-top:4px;font-size:13px;font-weight:600;color:var(--gold);border:1px solid var(--gold);border-radius:6px;padding:0 6px}
 .mini{display:flex;gap:16px}
 .mini div{text-align:right}
 .mini b{display:block;font:700 26px/1 var(--num)}
-.mini span{font-size:13px;color:var(--muted)}
-.turn{text-align:center;font:700 24px var(--num);color:var(--accent);margin:4px 0 0}
+.mini span{font-size:13px;color:var(--dim)}
+.turn{text-align:center;font:700 24px var(--num);color:var(--gold);margin:4px 0 0}
 .boardbox{width:100%;max-width:340px;margin:6px auto 0}
-.boardbox svg{display:block;width:100%;height:auto}
+.boardbox svg{display:block;width:100%;height:auto;filter:drop-shadow(0 8px 12px rgba(0,0,0,.45))}
 .dart{transform-box:fill-box;transform-origin:center;animation:land .35s cubic-bezier(.2,.9,.3,1) both}
 @keyframes land{from{opacity:0;transform:scale(3.2)}to{opacity:1;transform:scale(1)}}
 @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
-.legend{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;font-size:14px;color:var(--muted);margin:8px 0 4px}
+.legend{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;font-size:14px;color:var(--dim);margin:8px 0 4px}
 .chips{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:6px}
-.chip{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--muted);border-radius:8px;padding:5px 12px 5px 8px;font:700 24px/1.1 var(--num);animation:fade .3s both;display:flex;align-items:center;gap:8px}
-.chip i{font:600 13px var(--body);font-style:normal;color:var(--muted)}
+.chip{background:var(--paper);color:var(--ink);border:1px solid var(--wood-lt);border-left:5px solid var(--ink2);border-radius:8px;padding:5px 12px 5px 8px;font:700 24px/1.1 var(--num);animation:fade .3s both;display:flex;align-items:center;gap:8px}
+.chip i{font:600 13px var(--body);font-style:normal;color:var(--ink2)}
 .c-t{border-left-color:#c8312b}.c-d{border-left-color:#1f9a62}.c-s{border-left-color:#8d99a3}
-.c-bull,.c-outer{border-left-color:#e0a81a}.c-miss{border-left-color:transparent;color:var(--muted)}
-.chipnote{width:100%;text-align:center;font-size:14px;color:var(--muted)}
+.c-bull,.c-outer{border-left-color:#e0a81a}.c-miss{border-left-color:transparent;color:var(--ink2)}
+.chipnote{width:100%;text-align:center;font-size:14px;color:var(--dim)}
 .q{font-weight:500;font-size:18px}
 .row{display:flex;gap:8px;margin:8px 0}
-.row input{flex:1;min-width:0;font:700 34px var(--num);text-align:center;border:2px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);padding:2px 10px;min-height:54px}
+.row input{flex:1;min-width:0;font:700 34px var(--num);text-align:center;border:2px solid var(--wood);border-radius:8px;background:#fffaf0;color:var(--ink);padding:2px 10px;min-height:54px}
 .row2{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
 .fb{margin:6px 0;font-weight:600}
 .fb.no{color:var(--bad)}
 .note{font-weight:600;margin-bottom:8px}
 .note.ok{color:var(--good)}
-.hint{background:var(--chip);border-radius:8px;padding:10px 12px;margin-top:10px;font-size:16px}
+.hint{background:var(--paper2);border-radius:8px;padding:10px 12px;margin-top:10px;font-size:16px}
 .res{font:600 22px/1.3 var(--body);margin:2px 0 10px}
 .res b{font:700 34px var(--num)}
 .res.win{color:var(--good)}
 .res.bust{color:var(--bad)}
 .lines{font-size:16px;margin:0 0 10px;padding:0;list-style:none}
-.lines li{padding:3px 0;border-bottom:1px solid var(--line)}
+.lines li{padding:3px 0;border-bottom:1px solid #d8caa6}
 .tiles{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin:6px 0}
-.tile{background:var(--chip);border-radius:8px;padding:6px 2px;text-align:center;border:2px solid transparent}
+.tile{background:var(--paper2);border-radius:8px;padding:6px 2px;text-align:center;border:2px solid transparent}
 .tile.bad{border-color:var(--bad)}
 .tnum{font:700 20px/1 var(--num)}
 .tg{font-size:22px;height:30px;line-height:30px}
-.topp{font-size:11px;color:var(--muted);height:14px;font-weight:600;white-space:nowrap}
+.topp{font-size:11px;color:var(--ink2);height:14px;font-weight:600;white-space:nowrap}
 .topp.cl{color:var(--bad)}
-.tile button{width:100%;height:40px;border:1px solid var(--line);border-radius:6px;background:var(--card);font:700 22px var(--num);padding:0}
+.tile button{width:100%;height:40px;border:2px solid var(--wood-lt);border-radius:6px;background:var(--paper);color:var(--ink);font:700 22px var(--num);padding:0}
 .tadd{font:700 26px/1.5 var(--num)}
+.statrow{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center}
+.statrow b{display:block;font:700 34px/1.1 var(--num)}
+.statrow span{font-size:13px;color:var(--ink2)}
+.earns{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.earn{background:var(--paper2);color:var(--good);font-weight:600;font-size:14px;border-radius:999px;padding:3px 10px;display:inline-flex;align-items:center;gap:5px}
+.bank{display:flex;align-items:center;justify-content:flex-end;gap:5px;min-width:64px;font:700 26px var(--num);color:var(--gold)}
+.howbtn{display:block;width:100%;margin:0 0 14px;padding:12px 18px;background:var(--paper);color:var(--ink);border:3px solid var(--wood);border-radius:12px;font:700 26px/1.1 var(--num);letter-spacing:.3px;text-align:center;box-shadow:0 4px 0 var(--wood-dk),0 10px 16px rgba(0,0,0,.35)}
+.howbtn:active{transform:translateY(2px);box-shadow:0 2px 0 var(--wood-dk),0 6px 10px rgba(0,0,0,.35)}
+.how h3{font:700 24px/1.1 var(--num);margin:16px 0 4px;color:var(--burg)}
+.how p,.how li{font-size:16px}
+.how ul,.how ol{margin:0 0 6px;padding-left:20px}
+.how li{margin:3px 0}
 @media (prefers-reduced-motion:reduce){.dart,.chip{animation:none}}
 </style>
 </head>
@@ -122,8 +160,68 @@ var nm=function(n){return n===25?'Bull':String(n);};
 var S={mode:'501',diff:'medium',start:501,players:1,dIn:false,dOut:true,names:['Player 1','Player 2']};
 try{var saved=JSON.parse(localStorage.getItem('dmt2')||'null');if(saved){S=Object.assign(S,saved);}}catch(e){}
 if(!Array.isArray(S.names)||S.names.length<2)S.names=['Player 1','Player 2'];
-function saveS(){try{localStorage.setItem('dmt2',JSON.stringify(S));}catch(e){}}
+S.view='home';
+function saveS(){try{var c=Object.assign({},S);delete c.view;localStorage.setItem('dmt2',JSON.stringify(c));}catch(e){}}
 var G=null;
+
+/* ---------- rewards (saved on this phone only) ---------- */
+var R={bulls:0,bestStreak:0,bestAcc:0,games:0,days:[],streak:0,bestDays:0,last:''};
+try{var sr=JSON.parse(localStorage.getItem('dmt_rewards')||'null');if(sr){R=Object.assign(R,sr);}}catch(e){}
+if(!Array.isArray(R.days))R.days=[];
+function saveR(){try{localStorage.setItem('dmt_rewards',JSON.stringify(R));}catch(e){}}
+function dstr(d){return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);}
+function dnum(s){var a=s.split('-');return Math.round(Date.UTC(+a[0],+a[1]-1,+a[2])/86400000);}
+function bullSVG(n){return '<svg width="'+n+'" height="'+n+'" viewBox="0 0 20 20" aria-hidden="true" style="vertical-align:-3px"><circle cx="10" cy="10" r="9.5" fill="#c8312b"/><circle cx="10" cy="10" r="6.5" fill="#f1e6c4"/><circle cx="10" cy="10" r="3.4" fill="#c8312b"/></svg>';}
+function liveStreak(){
+  if(!R.last)return 0;
+  return dnum(dstr(new Date()))-dnum(R.last)>2?0:R.streak;
+}
+function touchToday(){
+  var t=dstr(new Date());
+  if(R.last===t)return;
+  var gap=R.last?dnum(t)-dnum(R.last):99;
+  if(!R.last){R.streak=1;G.msgs.push('Day 1 streak started');}
+  else if(gap<=2){R.streak++;G.msgs.push('Day '+R.streak+' streak'+(gap===2?', one day off is fine':''));}
+  else{R.streak=1;G.msgs.push('Welcome back! Fresh streak started');}
+  R.bestDays=Math.max(R.bestDays,R.streak);
+  R.days.push(t);if(R.days.length>60)R.days=R.days.slice(-60);
+  R.last=t;saveR();
+}
+function earn(n){R.bulls+=n;G.turnEarn+=n;G.gameEarn+=n;saveR();}
+function rewardAnswer(good,first,p){
+  touchToday();
+  if(!good)return;
+  earn(first?2:1);
+  if(first){
+    if(p.streak>R.bestStreak){
+      var had=R.bestStreak;R.bestStreak=p.streak;
+      if(p.streak>=3&&had>=3)G.msgs.push('New personal best: '+p.streak+' in a row');
+    }
+    if(p.streak%5===0){var b=p.streak>=20?10:p.streak>=10?5:3;earn(b);G.msgs.push(p.streak+' in a row! Bonus +'+b);}
+  }
+  saveR();
+}
+function rewardGame(){
+  var p=G.players[0];
+  earn(5);G.msgs.push('Game finished! Bonus +5');R.games++;
+  var acc=p.q?Math.round(100*p.ft/p.q):0;
+  if(p.q>=10&&acc>R.bestAcc){var had=R.bestAcc;R.bestAcc=acc;if(had>0)G.msgs.push('New best accuracy: '+acc+'%');}
+  saveR();
+}
+function earnHTML(){
+  if(!G.rewards)return '';
+  var h='';
+  if(G.turnEarn>0)h+='<span class="earn">+'+G.turnEarn+' '+bullSVG(14)+'</span>';
+  G.msgs.forEach(function(m){h+='<span class="earn">'+esc(m)+'</span>';});
+  return h?'<div class="earns">'+h+'</div>':'';
+}
+function gameEarnHTML(){return G.rewards?'<p class="muted">You earned '+G.gameEarn+' bullseyes this game.</p>':'';}
+function progressHTML(){
+  if(!R.bulls&&!R.last)return '<p class="muted sm">Play a 1 player game to start collecting bullseyes.</p>';
+  var t=dnum(dstr(new Date())),wk=0;
+  R.days.forEach(function(d){var g=t-dnum(d);if(g>=0&&g<=6)wk++;});
+  return '<div class="card"><div class="statrow"><div><b>'+bullSVG(26)+' '+R.bulls+'</b><span>bullseyes</span></div><div><b>'+liveStreak()+'</b><span>day streak</span></div><div><b>'+R.bestStreak+'</b><span>best in a row</span></div></div><p class="muted sm" style="margin:10px 0 0">Practiced '+wk+' of the last 7 days. One day off won\'t break your streak.'+(R.bestAcc?' Best accuracy: '+R.bestAcc+'%.':'')+'</p></div>';
+}
 
 /* ---------- board geometry ---------- */
 function pol(r,deg){var a=deg*Math.PI/180;return [r*Math.sin(a),-r*Math.cos(a)];}
@@ -307,59 +405,108 @@ function rulesLine(){
   return r;
 }
 
-/* ---------- setup screen ---------- */
+/* ---------- home and options screens ---------- */
+var LOGO='<svg viewBox="0 0 200 200" role="img" aria-label="A dartboard with a dart stuck in it and chalk math beside it"><circle cx="80" cy="118" r="62" fill="#1a1a1a"/><circle cx="80" cy="118" r="57.6" fill="#f1e6c4"/><circle cx="80" cy="118" r="28.8" fill="none" stroke="#1a1a1a" stroke-width="57.6" stroke-dasharray="9.05 9.05" transform="rotate(-99 80 118)"/><circle cx="80" cy="118" r="59.8" fill="none" stroke="#1f8a57" stroke-width="4.4"/><circle cx="80" cy="118" r="59.8" fill="none" stroke="#c8312b" stroke-width="4.4" stroke-dasharray="18.79 18.79" transform="rotate(-99 80 118)"/><circle cx="80" cy="118" r="37.6" fill="none" stroke="#1f8a57" stroke-width="4"/><circle cx="80" cy="118" r="37.6" fill="none" stroke="#c8312b" stroke-width="4" stroke-dasharray="11.81 11.81" transform="rotate(-99 80 118)"/><circle cx="80" cy="118" r="7" fill="#1f8a57"/><circle cx="80" cy="118" r="3.2" fill="#c8312b"/><circle cx="118" cy="88" r="2.6" fill="#000" opacity=".35"/><polygon points="152.7,60.9 165.0,61.6 180.9,50.9 170.1,44.3" fill="#8f1f1b" stroke="#5e1311" stroke-width="0.8" stroke-linejoin="round"/><polygon points="139.1,72.7 154.4,59.8 152.1,57.1 136.8,69.9" fill="#2a2f33" stroke="#111" stroke-width="0.8" stroke-linejoin="round"/><polygon points="118.5,88.6 125.7,86.3 140.0,73.8 135.8,68.8 121.0,80.7 117.5,87.4" fill="#cfd6db" stroke="#4a5760" stroke-width="0.8" stroke-linejoin="round"/><line x1="124.2" y1="78.3" x2="128.6" y2="83.5" stroke="#6c7a84" stroke-width="0.9" stroke-linecap="round" opacity="1"/><line x1="127.3" y1="75.8" x2="131.7" y2="81.0" stroke="#6c7a84" stroke-width="0.9" stroke-linecap="round" opacity="1"/><line x1="130.4" y1="73.2" x2="134.7" y2="78.4" stroke="#6c7a84" stroke-width="0.9" stroke-linecap="round" opacity="1"/><line x1="133.4" y1="70.6" x2="137.8" y2="75.8" stroke="#6c7a84" stroke-width="0.9" stroke-linecap="round" opacity="1"/><line x1="119.1" y1="84.6" x2="135.3" y2="71.3" stroke="#ffffff" stroke-width="1" stroke-linecap="round" opacity="0.7"/><polygon points="150.7,58.6 151.7,44.1 166.6,27.7 173.2,41.7" fill="#c8312b" stroke="#6e1713" stroke-width="0.8" stroke-linejoin="round"/><line x1="154.3" y1="55.0" x2="166.6" y2="35.5" stroke="#f6dcd9" stroke-width="1" stroke-linecap="round" opacity="1"/><g fill="none" stroke="#f6edd6" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M27.5 31.9Q28.8 30.3 29.4 29.7Q30.1 29.1 31.0 29.0Q31.9 28.8 32.7 29.0Q33.4 29.1 33.9 29.9Q34.4 30.6 34.6 31.3Q34.9 32.1 34.8 32.9Q34.6 33.8 34.0 34.7Q33.4 35.6 32.8 36.1Q32.1 36.7 31.3 37.0L30.5 37.3M30.4 36.7Q31.9 36.8 32.6 37.1Q33.2 37.4 33.5 38.0Q33.8 38.7 34.0 39.4Q34.3 40.1 34.0 40.9Q33.8 41.7 33.3 42.3Q32.8 43.0 32.2 43.7Q31.7 44.4 30.9 44.6Q30.0 44.8 29.2 44.9Q28.4 44.9 27.8 44.8Q27.1 44.8 26.7 44.3Q26.3 43.7 25.9 43.1L25.5 42.5M38.1 31.8L44.6 37.9M45.0 30.8L37.8 38.7M50.6 30.1Q51.2 28.7 51.7 27.9Q52.3 27.2 53.0 26.6Q53.7 26.1 54.6 26.0Q55.4 25.8 56.0 26.1Q56.6 26.4 57.1 26.8Q57.6 27.2 57.7 28.0Q57.8 28.9 57.6 29.8Q57.4 30.7 55.7 33.2Q53.9 35.7 51.4 38.1Q48.8 40.5 52.7 40.3L56.5 40.1M64.5 25.5Q66.1 25.5 66.7 26.0Q67.3 26.5 67.6 27.5Q68.0 28.5 68.2 29.8Q68.4 31.1 68.2 32.6Q67.9 34.0 67.6 35.5Q67.2 36.9 66.7 37.9Q66.1 38.9 65.4 39.4Q64.8 39.9 64.0 40.0Q63.3 40.0 62.7 39.6Q62.1 39.1 61.7 38.1Q61.2 37.1 61.0 35.6Q60.9 34.2 61.1 32.6Q61.3 31.1 61.8 29.8Q62.2 28.5 62.8 27.5Q63.4 26.6 64.0 26.0L64.6 25.4M73.3 28.0L79.8 27.4M72.6 32.7L79.5 32.0M160.8 106.9Q154.3 106.6 153.1 110.4Q151.8 114.3 152.1 114.5Q152.4 114.6 153.2 114.2Q154.0 113.7 154.9 113.6Q155.8 113.5 156.6 113.9Q157.5 114.3 158.1 114.8Q158.7 115.4 158.8 116.2Q158.9 117.1 158.8 118.1Q158.7 119.0 158.1 120.0Q157.5 121.0 156.8 121.7Q156.1 122.4 155.2 122.7Q154.2 122.9 153.3 122.9Q152.4 122.9 151.8 122.6Q151.2 122.2 150.6 121.4L150.1 120.6M166.0 106.3Q167.8 106.6 168.5 107.1Q169.2 107.7 169.6 108.7Q170.0 109.8 170.0 111.3Q170.0 112.9 169.7 114.5Q169.5 116.2 169.1 117.7Q168.7 119.2 167.9 120.2Q167.1 121.3 166.3 121.9Q165.6 122.5 164.8 122.5Q164.1 122.5 163.5 122.0Q162.8 121.4 162.4 120.2Q162.1 118.9 161.9 117.4Q161.7 115.8 162.2 114.1Q162.6 112.5 163.0 111.1Q163.4 109.6 164.2 108.6Q165.0 107.6 165.7 107.1L166.5 106.6M175.5 110.2Q179.3 106.4 177.9 114.6L176.6 122.9M152.5 134.9L159.6 134.6M170.7 126.3Q165.6 131.2 164.5 134.1Q163.3 137.1 163.1 137.7Q162.8 138.3 163.0 137.4Q163.2 136.6 163.6 136.0Q163.9 135.4 164.5 134.9Q165.0 134.5 165.6 134.1Q166.2 133.7 167.0 133.6Q167.8 133.4 168.4 133.7Q168.9 133.9 169.4 134.2Q169.8 134.4 170.1 135.1Q170.4 135.7 170.4 136.5Q170.4 137.2 170.3 137.9Q170.2 138.6 169.8 139.3Q169.4 139.9 168.8 140.5Q168.1 141.2 167.6 141.6Q167.0 141.9 166.3 142.0Q165.6 142.1 165.1 141.8Q164.6 141.4 164.0 141.1Q163.4 140.8 163.4 140.2Q163.3 139.6 163.1 138.9L162.9 138.2M180.3 125.5Q181.7 125.2 182.3 125.9Q182.9 126.6 183.3 127.8Q183.7 128.9 183.8 130.2Q183.9 131.4 183.5 133.1Q183.2 134.7 182.6 136.2Q182.0 137.6 181.5 138.8Q180.9 139.9 179.9 140.4Q178.9 140.9 178.3 140.9Q177.6 141.0 177.0 140.2Q176.4 139.4 176.1 138.3Q175.8 137.1 175.6 135.8Q175.5 134.4 176.0 132.8Q176.5 131.3 177.0 129.7Q177.5 128.2 178.2 127.2Q178.9 126.3 179.7 125.8L180.5 125.2M148.5 151.6Q155.9 149.6 159.6 149.3Q163.3 149.1 167.0 148.3Q170.7 147.5 174.5 147.2Q178.2 146.8 181.9 146.0L185.6 145.1"/></g><g fill="none" stroke="#f0c24a" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M90.3 20.3Q85.5 25.5 84.3 28.4Q83.2 31.2 83.1 31.7Q83.0 32.2 83.1 31.4Q83.2 30.7 83.6 30.0Q83.9 29.3 84.6 28.8Q85.2 28.2 85.7 27.9Q86.2 27.6 86.9 27.5Q87.7 27.5 88.2 27.6Q88.7 27.7 89.0 28.1Q89.4 28.5 89.7 29.1Q89.9 29.7 90.1 30.4Q90.3 31.2 90.0 31.9Q89.7 32.7 89.3 33.4Q89.0 34.1 88.5 34.6Q88.1 35.2 87.4 35.6Q86.8 35.9 86.1 36.0Q85.5 36.1 85.0 35.7Q84.5 35.4 84.1 35.0Q83.7 34.6 83.3 34.0Q83.0 33.4 83.0 32.7L83.1 32.0M98.7 19.5Q100.4 19.1 101.1 19.8Q101.8 20.5 101.9 21.4Q102.1 22.2 102.3 23.6Q102.5 25.0 102.4 26.6Q102.2 28.2 101.7 29.6Q101.3 31.0 100.6 32.1Q100.0 33.3 99.2 33.8Q98.4 34.3 97.7 34.2Q96.9 34.1 96.3 33.6Q95.6 33.2 95.3 32.0Q95.0 30.8 94.9 29.4Q94.9 28.0 95.2 26.6Q95.4 25.1 95.9 23.6Q96.3 22.2 97.1 21.2Q97.8 20.3 98.6 19.7L99.4 19.1M160.3 153.7Q152.3 165.6 156.7 165.1L161.1 164.6M160.0 157.4L158.0 170.9M173.1 151.8Q165.3 165.0 170.0 164.3L174.6 163.6M172.5 155.3L171.8 169.9M183.2 154.7Q186.9 150.6 185.5 159.7L184.0 168.7"/></g></svg>';
 function segBtns(id,items,cur){
   return '<div class="seg" id="'+id+'">'+items.map(function(it){return '<button data-v="'+it[0]+'" class="'+(String(cur)===String(it[0])?'on':'')+'">'+it[1]+'</button>';}).join('')+'</div>';
 }
-function setupHTML(){
+function homeHTML(){
+  return '<div class="logo">'+LOGO+'</div>'+
+    '<h1 class="brand">Dart Smart</h1>'+
+    '<p class="tagline">Throw more, stress less.</p>'+
+    '<button class="gametile" id="g501"><span class="gt-n">501</span><span class="gt-d">Count down to zero. 301 and 101 too.</span></button>'+
+    '<button class="gametile" id="gcr"><span class="gt-n">Cricket</span><span class="gt-d">Close 20 to 15 and the bull, then score.</span></button>'+
+    '<button class="howbtn" id="ghow">How to play</button>'+
+    progressHTML()+
+    '<p class="muted sm center">Random darts land on the board. You work out the score.</p>';
+}
+function optsHTML(){
+  var is501=S.mode==='501';
   var diffText={easy:'Steady throws. Mostly single hits.',medium:'Some wobble. A mix of singles, doubles and triples.',hard:'Wild throws. Lots of doubles, triples and misses.'};
-  var h='<h1>Dart Smart</h1><p class="tagline">Throw more, stress less.</p><p class="muted">Random darts land on the board. You work out the score.</p>';
-  h+='<div class="card"><div class="lbl">Game</div>'+segBtns('segMode',[['501','501'],['cricket','Cricket']],S.mode);
-  h+='<div class="lbl">Players</div>'+segBtns('segPlayers',[[1,'1 player'],[2,'2 players']],S.players);
+  var h='<div class="top"><button class="ghost" id="back">\u2039 Back</button><div class="ttl">'+(is501?S.start:'Cricket')+'</div><div style="width:64px"></div></div>';
+  h+='<div class="card"><div class="lbl">Players</div>'+segBtns('segPlayers',[[1,'1 player'],[2,'2 players']],S.players);
   if(S.players===2){
     h+='<div class="lbl">Names</div><div class="names"><input id="n0" maxlength="14" aria-label="Player 1 name" value="'+esc(S.names[0])+'"><input id="n1" maxlength="14" aria-label="Player 2 name" value="'+esc(S.names[1])+'"></div>';
   }
-  if(S.mode==='501'){
+  if(is501){
     h+='<div class="lbl">Starting score</div>'+segBtns('segStart',[[501,'501'],[301,'301'],[101,'101 (quick)']],S.start);
     h+='<div class="lbl">Getting started</div>'+segBtns('segIn',[[0,'Straight in'],[1,'Double in']],S.dIn?1:0);
     h+='<div class="lbl">Finishing</div>'+segBtns('segOut',[[0,'Straight out'],[1,'Double out']],S.dOut?1:0);
   }
   h+='<div class="lbl">Difficulty</div>'+segBtns('segDiff',[['easy','Easy'],['medium','Medium'],['hard','Hard']],S.diff);
-  h+='<p class="muted sm" style="margin-top:8px">'+diffText[S.diff]+'</p>';
+  h+='<p class="muted sm" style="margin:8px 0 0">'+diffText[S.diff]+'</p>';
   h+='<button class="primary wide" id="go">Start game</button></div>';
-  h+='<div class="card sm">';
-  if(S.mode==='501'){
-    h+='<b>How 501 works.</b> Each round, add up the darts that count, then subtract from your score. Get to exactly 0 to win. ';
-    h+='<b>Double in:</b> your score doesn\'t start until you hit a double (or the bull), so darts before that count for nothing. ';
-    h+='<b>Double out:</b> you must finish on a double, and going below 0 or being left on 1 is a bust. Any bust puts your score back to where it started the round.';
+  var how;
+  if(is501){
+    how='Each round, add up the darts that count, then subtract from your score. Get to exactly 0 to win. <b>Double in:</b> your score doesn\'t start until you hit a double (or the bull), so darts before that count for nothing. <b>Double out:</b> you must finish on a double, and going below 0 or being left on 1 is a bust. Any bust puts your score back to where it started the round.';
   }else{
-    h+='<b>How Cricket works.</b> Close 20, 19, 18, 17, 16, 15 and Bull with 3 marks each. Single = 1 mark, double = 2, triple = 3. Outer bull = 1 mark, bull = 2. Extra marks on a number you\'ve closed score its value (25 for Bull), unless your opponent has closed it too. ';
-    h+=S.players===2?'Close all seven while level or ahead on points to win.':'Here the opponent closes a number every third round.';
+    how='Close 20, 19, 18, 17, 16, 15 and Bull with 3 marks each. Single = 1 mark, double = 2, triple = 3. Outer bull = 1 mark, bull = 2. Extra marks on a number you\'ve closed score its value (25 for Bull), unless your opponent has closed it too. '+(S.players===2?'Close all seven while level or ahead on points to win.':'Here the opponent closes a number every third round.');
   }
-  if(S.players===2)h+=' <b>Two players:</b> pass the phone each turn. Everyone works out their own throws.';
-  h+='</div>';
+  if(S.players===2)how+=' <b>Two players:</b> pass the phone each turn. Everyone works out their own throws. Bullseyes and streaks are earned in 1 player games.';
+  h+='<details class="card sm"><summary>How '+(is501?'501':'Cricket')+' works</summary><p>'+how+'</p></details>';
   return h;
 }
-function bindSetup(){
+function bindHome(){
+  $('#g501').onclick=function(){S.mode='501';S.view='opts';saveS();render();window.scrollTo(0,0);};
+  $('#gcr').onclick=function(){S.mode='cricket';S.view='opts';saveS();render();window.scrollTo(0,0);};
+  $('#ghow').onclick=function(){S.view='how';render();window.scrollTo(0,0);};
+}
+function bindOpts(){
   function wire(id,fn){
     var el=document.querySelectorAll('#'+id+' button');
     for(var i=0;i<el.length;i++){(function(b){b.onclick=function(){fn(b.dataset.v);saveS();render();};})(el[i]);}
   }
-  wire('segMode',function(v){S.mode=v;});
   wire('segPlayers',function(v){S.players=+v;});
   wire('segStart',function(v){S.start=+v;});
   wire('segIn',function(v){S.dIn=+v===1;});
   wire('segOut',function(v){S.dOut=+v===1;});
   wire('segDiff',function(v){S.diff=v;});
   [0,1].forEach(function(i){var el=$('#n'+i);if(el)el.oninput=function(){S.names[i]=el.value;saveS();};});
+  $('#back').onclick=function(){S.view='home';render();window.scrollTo(0,0);};
   $('#go').onclick=newGame;
+}
+
+/* ---------- how to play ---------- */
+function how501(){
+  return '<div class="how">'+
+  '<h3>The goal</h3><p>Start with 501 points (or 301, or 101) and count down to exactly 0.</p>'+
+  '<h3>Reading the darts</h3><ul>'+
+  '<li><b>S</b> is a single, the face value. S5 = 5.</li>'+
+  '<li><b>D</b> is a double, twice the number. D8 = 2 × 8 = 16.</li>'+
+  '<li><b>T</b> is a triple, three times the number. T20 = 3 × 20 = 60.</li>'+
+  '<li>The outer bull is 25, the bull is 50, and a miss is 0.</li></ul>'+
+  '<h3>Each round</h3><ol><li>Three darts land on the board.</li><li>Add them up. That is your round total.</li><li>Subtract the total from your score. That is your new score.</li></ol>'+
+  '<p>Stuck? Tap Need a hint? any time. Hints are free.</p>'+
+  '<h3>Double in and double out</h3><p><b>Double in:</b> your score does not start until a dart lands in a double (or the bull). Darts before that count for nothing.</p><p><b>Double out:</b> you must finish on a double (or the bull).</p>'+
+  '<h3>Busts</h3><p>With double out, you bust if you go below 0, are left on 1, or reach 0 without a double. With straight out, you only bust by going below 0. A bust puts your score back to what it was at the start of the round.</p>'+
+  '<h3>Winning</h3><p>Be the first to reach exactly 0. In a two-player game, the first player to check out wins.</p></div>';
+}
+function howCR(){
+  return '<div class="how">'+
+  '<h3>The goal</h3><p>Close all seven numbers: 20, 19, 18, 17, 16, 15 and the bull. A number is closed when you have 3 marks on it.</p>'+
+  '<h3>Marks</h3><ul><li>A single is 1 mark, a double is 2, and a triple is 3.</li><li>The outer bull is 1 mark, and the bull is 2.</li><li>Any other number, like 12 or 7, earns nothing.</li></ul>'+
+  '<h3>Scoring points</h3><p>Once you have closed a number, each extra mark on it scores that number’s value (25 for the bull), but only if your opponent has not closed it yet.</p><p>Example: you have closed 20 and hit a T20. That is 3 extra marks × 20 = 60 points.</p>'+
+  '<h3>Each round</h3><ol><li>Three darts land on the board.</li><li>Tally your new marks. Each counter starts at what you already have, so tap + for every new mark.</li><li>Work out the points that round scored.</li></ol>'+
+  '<h3>Winning</h3><p>On your own, close all seven numbers. With two players, close all seven while level or ahead on points. In a one-player game, the practice opponent closes a number every third round, starting with the low ones.</p></div>';
+}
+function howHTML(){
+  var tab=S.howTab||'501';
+  var h='<div class="top"><button class="ghost" id="back">\u2039 Back</button><div class="ttl">How to play</div><div style="width:64px"></div></div>';
+  h+='<div class="card">'+segBtns('segHow',[['501','501'],['cricket','Cricket']],tab)+(tab==='501'?how501():howCR())+'</div>';
+  h+='<details class="card sm"><summary>Bullseyes and streaks</summary><p>You earn 2 bullseyes for each answer you get right on the first try, and 1 for a right answer after a retry or a hint. Show answer earns none. You get a bonus for every 5 right in a row, and 5 more for finishing a game.</p><p>A practice day is any day you finish a round. Taking one day off will not break your streak.</p><p>Bullseyes and streaks count in 1 player games only. Hints are always free.</p></details>';
+  return h;
+}
+function bindHow(){
+  var el=document.querySelectorAll('#segHow button');
+  for(var i=0;i<el.length;i++){(function(b){b.onclick=function(){S.howTab=b.dataset.v;saveS();render();};})(el[i]);}
+  $('#back').onclick=function(){S.view='home';render();window.scrollTo(0,0);};
 }
 
 /* ---------- game flow ---------- */
 function newGame(){
   var np=S.players;
   G={round:0,cur:0,players:[],attempts:0,hint:false,hintUsed:false,fb:'',fbc:'',lastVal:'',wrong:[],note:'',oppMsg:'',
-     over:false,winner:-1,rules:{dIn:S.dIn,dOut:S.dOut}};
+     over:false,winner:-1,rules:{dIn:S.dIn,dOut:S.dOut},rewards:np===1,turnEarn:0,gameEarn:0,msgs:[]};
   for(var i=0;i<np;i++){
     var marks={};CR.forEach(function(n){marks[n]=0;});
     var nmv=np===2?((S.names[i]||'').trim()||'Player '+(i+1)):'You';
@@ -371,18 +518,18 @@ function newGame(){
 function startTurn(first){
   if(first){G.cur=0;G.round=1;}
   else{G.cur=(G.cur+1)%G.players.length;if(G.cur===0)G.round++;}
-  G.attempts=0;G.hint=false;G.hintUsed=false;G.fb='';G.fbc='';G.lastVal='';G.wrong=[];G.note='';G.oppMsg='';
+  G.attempts=0;G.hint=false;G.hintUsed=false;G.fb='';G.fbc='';G.lastVal='';G.wrong=[];G.note='';G.oppMsg='';G.turnEarn=0;G.msgs=[];
   if(S.mode==='501'){G.turn=gen501(P());G.step='total';}
   else{G.turn=genCricket();G.step='marks';G.add={};CR.forEach(function(n){G.add[n]=0;});}
   render();
   window.scrollTo(0,0);
 }
-function toMenu(){G=null;render();window.scrollTo(0,0);}
+function toMenu(){G=null;S.view='home';render();window.scrollTo(0,0);}
 function render(){
   var app=$('#app');
-  if(!G){app.innerHTML=setupHTML();bindSetup();return;}
+  if(!G){if(S.view==='opts'){app.innerHTML=optsHTML();bindOpts();}else if(S.view==='how'){app.innerHTML=howHTML();bindHow();}else{app.innerHTML=homeHTML();bindHome();}return;}
   var np=G.players.length;
-  app.innerHTML='<div class="top"><button class="ghost" id="menu">Menu</button><div class="ttl">'+(S.mode==='501'?S.start:'Cricket')+'</div><div style="width:64px"></div></div>'+
+  app.innerHTML='<div class="top"><button class="ghost" id="menu">Menu</button><div class="ttl">'+(S.mode==='501'?S.start:'Cricket')+'</div><div class="bank" id="bank"></div></div>'+
     '<div class="rules">'+rulesLine()+'</div>'+
     '<div class="hud'+(np===2?' two':'')+'" id="hud"></div>'+
     (np===2?'<div class="turn">'+esc(P().name)+'\'s turn</div>':'')+
@@ -408,11 +555,13 @@ function hud(){
     h+='<div class="mini"><div><b>'+G.round+'</b><span>round</span></div><div><b>'+acc1+'</b><span>first try</span></div><div><b>'+p.streak+'</b><span>streak</span></div></div>';
   }
   $('#hud').innerHTML=h;
+  var bk=$('#bank');if(bk)bk.innerHTML=G.rewards?bullSVG(18)+' '+R.bulls:'';
 }
 function resolve(good){
   var p=P(),first=good&&G.attempts===0&&!G.hintUsed;
   p.q++;
   if(first){p.ft++;p.streak++;p.best=Math.max(p.best,p.streak);}else p.streak=0;
+  if(G.rewards)rewardAnswer(good,first,p);
   G.attempts=0;G.hint=false;G.hintUsed=false;G.fb='';G.fbc='';G.lastVal='';G.wrong=[];
 }
 function wrongAns(v,exp){
@@ -469,7 +618,7 @@ function panel501(){
     if(G.over){
       var how=G.rules.dOut?' on a double':'';
       h+='<div class="res win">'+(G.players.length===2?esc(p.name)+' wins! Checked out'+how+'.':'Checkout! You finished'+how+'.')+'</div>';
-      h+=summaryHTML()+overButtons();
+      h+=summaryHTML()+gameEarnHTML()+overButtons();
     }else h+=nextBtn();
   }
   return h;
@@ -490,7 +639,7 @@ function check501(){
 function finish501(){
   var t=G.turn,p=P();
   p.rem=t.newScore;p.isIn=t.newIn;G.step='done';G.note='';
-  if(t.won){G.over=true;G.winner=G.cur;}
+  if(t.won){G.over=true;G.winner=G.cur;if(G.rewards)rewardGame();}
 }
 
 /* ---------- cricket panel ---------- */
@@ -534,7 +683,7 @@ function panelCR(){
       if(G.players.length===1)h+='<div class="res win">All seven numbers closed!</div>';
       else if(G.winner>=0)h+='<div class="res win">'+esc(G.players[G.winner].name)+' wins!</div>';
       else h+='<div class="res">It\'s a tie!</div>';
-      h+=summaryHTML()+overButtons();
+      h+=summaryHTML()+gameEarnHTML()+overButtons();
     }else h+=nextBtn();
   }
   return h;
@@ -562,7 +711,7 @@ function finishCR(){
       var c=[15,16,17,18,19,20,25].filter(function(n){return !G.bot.has(n);});
       if(c.length){var n=c[0];G.bot.add(n);G.oppMsg='The opponent just closed '+nm(n)+'.';}
     }
-    G.over=closedAll(p);
+    G.over=closedAll(p);if(G.over&&G.rewards)rewardGame();
   }else{
     if(closedAll(p)&&closedAll(o)){
       G.over=true;G.winner=p.score>o.score?G.cur:o.score>p.score?1-G.cur:-1;
@@ -592,7 +741,7 @@ function onCheck(){
 function renderPanel(){
   hud();
   var p=$('#panel');
-  p.innerHTML=S.mode==='501'?panel501():panelCR();
+  p.innerHTML=earnHTML()+(S.mode==='501'?panel501():panelCR());
   var q=function(s){return p.querySelector(s);};
   var chk=q('#chk');if(chk)chk.onclick=onCheck;
   var ans=q('#ans');
