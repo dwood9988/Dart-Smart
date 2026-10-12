@@ -247,18 +247,27 @@ function crMarks(h){
 }
 function genCricket(){
   var p=P(),sig=SIG[S.diff];
-  var open=CR.filter(function(n){return p.marks[n]<3;}),pool;
-  if(open.length)pool=open;
-  else{pool=CR.filter(function(n){return !oppBlocked(n);});if(!pool.length)pool=CR;}
+  var open=CR.filter(function(n){return p.marks[n]<3;});
+  var mine=CR.filter(function(n){return p.marks[n]>=3;});
+  var spare=CR.filter(function(n){return !oppBlocked(n);});
   var darts=[],exp={};CR.forEach(function(n){exp[n]=0;});
   for(var i=0;i<3;i++){
-    var n=pool[Math.floor(Math.random()*pool.length)],t=aimPoint('T',n);
+    var n,r=Math.random();
+    if(open.length){
+      n=open[0];
+      if(open.length>1&&r<.2)n=open[1];
+      else if(mine.length&&r>.7)n=mine[Math.floor(Math.random()*mine.length)];
+    }else{
+      var pool=spare.length?spare:CR;
+      n=pool[Math.floor(Math.random()*pool.length)];
+    }
+    var t=aimPoint('T',n);
     var h=classify(t[0]+gauss()*sig,t[1]+gauss()*sig);
     h.cm=crMarks(h);darts.push(h);
     if(h.cm[0])exp[h.cm[0]]+=h.cm[1];
   }
   var detail=CR.map(function(n){
-    var before=p.marks[n],add=exp[n],sc=Math.max(0,before+add-3),blocked=oppBlocked(n);
+    var before=p.marks[n],add=exp[n],sc=Math.max(0,before+add-3)-Math.max(0,before-3),blocked=oppBlocked(n);
     return {n:n,before:before,add:add,sc:sc,blocked:blocked,pts:blocked?0:sc*n};
   });
   var points=detail.reduce(function(s,d){return s+d.pts;},0);
@@ -322,7 +331,7 @@ function setupHTML(){
     h+='<b>Double out:</b> you must finish on a double, and going below 0 or being left on 1 is a bust. Any bust puts your score back to where it started the round.';
   }else{
     h+='<b>How Cricket works.</b> Close 20, 19, 18, 17, 16, 15 and Bull with 3 marks each. Single = 1 mark, double = 2, triple = 3. Outer bull = 1 mark, bull = 2. Extra marks on a number you\'ve closed score its value (25 for Bull), unless your opponent has closed it too. ';
-    h+=S.players===2?'Close all seven while level or ahead on points to win.':'Here the opponent closes a number every second round.';
+    h+=S.players===2?'Close all seven while level or ahead on points to win.':'Here the opponent closes a number every third round.';
   }
   if(S.players===2)h+=' <b>Two players:</b> pass the phone each turn. Everyone works out their own throws.';
   h+='</div>';
@@ -486,19 +495,19 @@ function tilesHTML(locked){
   var p=P(),o=O();
   return '<div class="tiles">'+CR.map(function(n){
     var bad=G.wrong.indexOf(n)>=0,opp;
-    if(o){var m=o.marks[n];opp='<div class="topp'+(m>=3?' cl':'')+'">opp '+GL[m]+'</div>';}
+    if(o){var m=o.marks[n];opp='<div class="topp'+(m>=3?' cl':'')+'">opp '+GL[Math.min(3,m)]+'</div>';}
     else opp='<div class="topp cl">'+(G.bot.has(n)?'opp ⊗':'')+'</div>';
-    return '<div class="tile'+(bad?' bad':'')+'"><div class="tnum">'+nm(n)+'</div><div class="tg">'+GL[p.marks[n]]+'</div>'+opp+
+    return '<div class="tile'+(bad?' bad':'')+'"><div class="tnum">'+nm(n)+'</div><div class="tg">'+GL[Math.min(3,p.marks[n]+G.add[n])]+'</div>'+opp+
       (locked?'':'<button data-n="'+n+'" data-d="1" aria-label="Add a mark on '+nm(n)+'">+</button>')+
-      '<div class="tadd">'+(locked?(G.add[n]?'+'+G.add[n]:'0'):G.add[n])+'</div>'+
+      '<div class="tadd">'+(p.marks[n]+G.add[n])+'</div>'+
       (locked?'':'<button data-n="'+n+'" data-d="-1" aria-label="Remove a mark on '+nm(n)+'">−</button>')+'</div>';
   }).join('')+'</div>';
 }
 function panelCR(){
   var t=G.turn,p=P(),h='';
   if(G.step==='marks'){
-    h+='<p class="q">Tally the marks from all three darts. Use + and − under each number.</p>'+tilesHTML(false);
-    h+='<p class="muted sm">The symbol is your marks so far. Below it is your opponent\'s; red means they\'ve closed it, so no points there.</p>';
+    h+='<p class="q">Add your new marks. Each counter starts at what you already have, so tap + for every mark these three darts earned.</p>'+tilesHTML(false);
+    h+='<p class="muted sm">⊗ means closed (3 marks or more). Below each symbol is your opponent\'s; red means they\'ve closed it, so no points there.</p>';
     h+='<button class="primary wide" id="chk">Check marks</button>'+fbH()+helpH(t.darts.map(describeCR).map(esc).join('<br>'));
   }else if(G.step==='points'){
     h+=tilesHTML(true)+'<p class="q">How many points did this round score?</p>';
@@ -506,7 +515,7 @@ function panelCR(){
     var hl=t.detail.filter(function(d){return d.add>0;}).map(function(d){
       if(d.sc===0)return nm(d.n)+': you had '+d.before+', added '+d.add+'. No marks past three.';
       if(d.blocked)return nm(d.n)+': '+oppName()+' closed it, so no points.';
-      return nm(d.n)+': '+d.sc+' mark'+(d.sc>1?'s':'')+' past three × '+d.n+' = ?';
+      return nm(d.n)+': '+d.sc+' scoring mark'+(d.sc>1?'s':'')+' × '+d.n+' = ?';
     });
     h+=inputRow()+fbH()+helpH(hl.length?hl.map(esc).join('<br>'):'No marks were added, so nothing to score.');
   }else{
@@ -543,12 +552,12 @@ function checkCR(){
 }
 function finishCR(){
   var t=G.turn,p=P(),o=O();
-  CR.forEach(function(n){p.marks[n]=Math.min(3,p.marks[n]+t.exp[n]);});
+  CR.forEach(function(n){p.marks[n]+=t.exp[n];});
   p.score+=t.points;G.oppMsg='';
   if(!o){
-    if(G.round%2===0){
-      var c=CR.filter(function(n){return !G.bot.has(n);});
-      if(c.length){var n=c[Math.floor(Math.random()*c.length)];G.bot.add(n);G.oppMsg='The opponent just closed '+nm(n)+'.';}
+    if(G.round%3===0){
+      var c=[15,16,17,18,19,20,25].filter(function(n){return !G.bot.has(n);});
+      if(c.length){var n=c[0];G.bot.add(n);G.oppMsg='The opponent just closed '+nm(n)+'.';}
     }
     G.over=closedAll(p);
   }else{
