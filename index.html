@@ -193,6 +193,7 @@ details.card p{margin:10px 0 0}
 .wgrid span{white-space:nowrap}
 .op{font-style:normal;font-size:.68em;color:var(--gold)}
 .tcase svg.starsvg{border:0;border-radius:0}
+.ch-big.sm{font-size:52px;letter-spacing:0;line-height:1.1}
 @media (prefers-reduced-motion:reduce){.dart,.chip,.peel,.cl{animation:none}.peel{opacity:0}.cl{opacity:1}}
 </style>
 </head>
@@ -708,10 +709,10 @@ function bindTrophies(){
 /* ---------- classroom ---------- */
 var LESSONS=[
   {id:'l1',title:'Doubles and triples',sub:'Read D14 and T17 in your head'},
-  {id:'l2',title:'Adding three scores',sub:'Coming soon',soon:true},
+  {id:'l2',title:'Adding three scores',sub:'Add three dart scores in your head'},
   {id:'l3',title:'Subtracting from your score',sub:'Coming soon',soon:true}
 ];
-var C={step:0,alt:false,qs:[],qi:0,attempts:0,hints:0,fb:'',fbc:'',done:false,val:''};
+var C={li:0,step:0,alt:false,qs:[],qi:0,attempts:0,hints:0,fb:'',fbc:'',done:false,val:''};
 var WGRID='<div class="wgrid">'+[1,2,3,4,5,6,7,8,9,10].map(function(n){return '<span>'+n+' <i class="op">×2 →</i> '+(2*n)+'</span>';}).join('')+'</div>';
 var L1=[
   {board:[['ch-title','Doubles and triples'],['cw','Goal: see D14 or T17 on the board and know the score without panic.'],['cd','No timer. Slow and sure beats fast and guessing.']]},
@@ -721,10 +722,73 @@ var L1=[
   {board:[['ch-title','Triples'],['cw','A triple is a double, plus the number one more time.'],['cy','T17'],['cw','double 17 is 34'],['cw','34 + 10 = 44'],['cw','44 + 7 = 51'],['cd','Shortcut: T20 is 60. T19 is 3 less (57) and T18 is 6 less (54).']],
    alt:[['ch-title','Triples, another way'],['cy','T17'],['cw','seven times 3 is 21'],['cw','ten times 3 is 30'],['cw','30 + 21 = 51'],['cd','Same answer, different path.']]},
   {board:[['ch-title','Worth memorizing'],['cw','T20 = 60'],['cw','T19 = 57'],['cw','T18 = 54'],['cw','T17 = 51'],['cw','T16 = 48'],['cw','T15 = 45'],['cd','These are the Cricket numbers.']]},
-  {board:[['ch-title','Say it out loud'],['cw','Before you answer, talk it through like you are telling a friend:'],['cy','“T17. Double is 34. Plus 17 is 51.”'],['cd','At the board, nobody is waiting for you to write it down.']]}
+  {board:[['ch-title','Say it out loud'],['cw','Before you answer, talk it through like you are telling a friend:'],['cy','“T17. Double is 34. Plus 17 is 51.”'],['cd','At the board, nobody is waiting for you to write it down. So practice saying it out loud and doing it in your head!']]}
 ];
 // steps 0 to 5 are chalkboard pages, 6 is guided practice, 7 is mixed practice, 8 is the finish
 var L1_LAST=8;
+var HUND=['90 + 10 = 100','80 + 20 = 100','70 + 30 = 100','60 + 40 = 100','50 + 50 = 100'];
+var L2=[
+  {board:[['ch-title','Adding three scores'],['cw','Goal: add three dart scores in your head. Whole numbers first, then the stragglers.'],['cd','No timer. Slow and sure beats fast and guessing.']]},
+  {board:[['ch-title','Warm-up'],['cw','Pairs that make a hundred.']].concat(HUND.map(function(t){return ['cw',t];})).concat([['cd','Say them out loud once or twice. They are the building blocks.']])},
+  {board:[['ch-title','Your way'],['cw','Whole numbers first, then the stragglers.'],['cy','57 + 60 + 20'],['cw','whole numbers: 60 and 20 is 80'],['cw','straggler: 57 is 50 and 7'],['cw','80 + 50 = 130'],['cw','130 + 7 = 137'],['cd','Look for 10s, 5s and single digits first. They are the fastest to do in your head.']]},
+  {board:[['ch-title','Make a hundred'],['cw','The tricky bit is crossing 100.'],['cy','80 + 50'],['cw','80 needs 20 to make a hundred'],['cw','take 20 from the 50: 30 left'],['cw','100 + 30 = 130']],
+   alt:[['ch-title','Make a hundred, another way'],['cy','80 + 50'],['cw','split 80 into 50 and 30'],['cw','50 + 50 = 100'],['cw','100 + 30 = 130'],['cd','Same answer, different path.']]},
+  {board:[['ch-title','When nothing is round'],['cy','57 + 51 + 45'],['cw','split each into tens and ones:'],['cw','50 + 7, 50 + 1, 40 + 5'],['cw','whole tens: 50 + 50 + 40 = 140'],['cw','leftovers: 7 + 1 + 5 = 13'],['cw','140 + 13 = 153']],
+   alt:[['ch-title','Round and fix'],['cy','57 + 51 + 45'],['cw','round each to a whole ten:'],['cw','57 → 60, 51 → 50, 45 → 40'],['cw','whole tens: 60 + 50 + 40 = 150'],['cw','fixes: 57 is 3 under, so −3'],['cw','51 is 1 over, so +1'],['cw','45 is 5 over, so +5'],['cw','−3 + 1 + 5 = +3'],['cw','150 + 3 = 153'],['cd','Round to whichever ten is easiest.']]},
+  {board:[['ch-title','Say it out loud'],['cw','Read each dart, then add:'],['cy','“T19, T20, S20. That’s 57, 60, 20. Sixty and twenty is 80, plus 50 is 130, plus 7 is 137.”'],['cd','At the board, nobody is waiting for you to write it down. So practice saying it out loud and doing it in your head!']]}
+];
+var DARTS=[['T20',60],['T19',57],['T18',54],['T17',51],['T16',48],['T15',45],['D20',40],['D18',36],['D16',32],['D10',20],['D8',16],['S20',20],['S19',19],['S18',18],['S15',15],['S10',10],['S5',5],['S1',1],['Bull',50],['Outer bull',25]];
+function sumExplain(vals){
+  var W=vals.filter(function(v){return v%10===0;}),O=vals.filter(function(v){return v%10!==0;}),h=[],run;
+  if(W.length===3)return vals[0]+' + '+vals[1]+' = '+(vals[0]+vals[1])+', then '+(vals[0]+vals[1])+' + '+vals[2]+' = '+(vals[0]+vals[1]+vals[2])+'.';
+  if(W.length===0){
+    var T=vals.reduce(function(a,v){return a+v-v%10;},0),U=vals.reduce(function(a,v){return a+v%10;},0);
+    return 'Nothing is round, so split each into tens and ones. Whole tens: '+vals.map(function(v){return v-v%10;}).join(' + ')+' = '+T+'. Leftovers: '+vals.map(function(v){return v%10;}).join(' + ')+' = '+U+'. '+T+' + '+U+' = '+(T+U)+'.';
+  }
+  run=W.reduce(function(a,v){return a+v;},0);
+  h.push(W.length===1?'Whole number first: '+W[0]+'.':'Whole numbers first: '+W.join(' + ')+' = '+run+'.');
+  O.forEach(function(v){
+    var t=v-v%10,u=v%10;
+    if(!t){h.push('Straggler '+v+': '+run+' + '+v+' = '+(run+v)+'.');run+=v;return;}
+    h.push('Straggler '+v+' is '+t+' and '+u+'.');
+    h.push(run+' + '+t+' = '+(run+t)+'.');run+=t;
+    if(u){h.push(run+' + '+u+' = '+(run+u)+'.');run+=u;}
+  });
+  return h.join(' ');
+}
+function sumHints(vals){
+  var W=vals.filter(function(v){return v%10===0;});
+  return [W.length?'Whole numbers first: '+W.join(' and ')+'.':'Nothing is round. Split each one into tens and ones.',
+          W.length===3?'All three are whole tens, so add them one at a time.':'Then add the tens of the stragglers, and the ones last.'];
+}
+function mkSum(vals,labels,hints){
+  var big=labels?labels.join('&nbsp;&nbsp;&nbsp;'):vals.join(' + ');
+  var ex=sumExplain(vals);
+  if(labels)ex=labels.map(function(l,i){return l+' is '+vals[i];}).join(', ')+'. '+ex;
+  return {big:big,small:true,label:big,resText:labels?labels.join(' + '):vals.join(' + '),ans:vals[0]+vals[1]+vals[2],hints:hints,explain:ex};
+}
+function guided2(){return [
+  mkSum([60,20,15],null,['Whole numbers first: 60 and 20 make 80. Then add the 15.']),
+  mkSum([54,20,10],null,['Look for the whole numbers first.']),
+  mkSum([40,57,5],null,['Whole numbers first. Watch for crossing 100: make a hundred.']),
+  mkSum([51,32,9],null,[])
+];}
+function mixed2(){
+  var out=[];
+  for(var i=0;i<6;i++){
+    var pick=shuffle(DARTS.slice()).slice(0,3),vals=pick.map(function(d){return d[1];}),labels=pick.map(function(d){return d[0];});
+    out.push(mkSum(vals,labels,[labels.map(function(l,j){return l+' is '+vals[j];}).join(', ')+'.',sumHints(vals).join(' ')]));
+  }
+  return out;
+}
+LESSONS[0].steps=L1;LESSONS[0].done='You worked through doubles and triples.';
+LESSONS[1].steps=L2;LESSONS[1].done='You worked through adding three scores.';
+function startPractice(){
+  if(C.li===0)return startPracticeL1();
+  C.qi=0;C.attempts=0;C.hints=0;C.fb='';C.fbc='';C.done=false;C.val='';
+  C.qs=C.step===6?guided2():mixed2();
+}
+
 function ch(lines,still){
   return '<div class="chalkboard'+(still?' still':'')+(S.big?' xl':'')+'">'+lines.map(function(l,i){return '<div class="cl '+l[0]+'" style="animation-delay:'+(i*0.3).toFixed(2)+'s">'+l[1]+'</div>';}).join('')+'</div>';
 }
@@ -736,6 +800,7 @@ function genHints(kind,n){
   return h;
 }
 function explainQ(q){
+  if(q.explain)return q.explain;
   if(q.kind==='D'){
     if(q.n<=10)return 'Double '+q.n+' is '+q.ans+'.';
     var r=q.n-10;return 'Double 10 is 20, double '+r+' is '+(2*r)+', and 20 + '+(2*r)+' = '+q.ans+'.';
@@ -744,7 +809,7 @@ function explainQ(q){
 }
 function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
 function pickN(k){var pool=[];for(var i=11;i<=20;i++)pool.push(i);return shuffle(pool).slice(0,k);}
-function startPractice(){
+function startPracticeL1(){
   C.qi=0;C.attempts=0;C.hints=0;C.fb='';C.fbc='';C.done=false;C.val='';
   if(C.step===6){
     C.qs=[mkQ('D',12,['Double 10, then double 2, then put them together.']),mkQ('D',16,['Split it into 10 and 6.']),mkQ('T',14,['Double it, then add 14 once more.']),mkQ('T',13,[])];
@@ -756,7 +821,7 @@ function startPractice(){
 function goStep(i){
   C.step=i;C.alt=false;
   if(i===6||i===7)startPractice();
-  if(i===L1_LAST&&R.lessons.indexOf('l1')<0){R.lessons.push('l1');saveR();}
+  var lid=LESSONS[C.li].id;if(i===L1_LAST&&R.lessons.indexOf(lid)<0){R.lessons.push(lid);saveR();}
   render();window.scrollTo(0,0);
 }
 function starsHTML(){
@@ -777,7 +842,7 @@ function classHTML(){
 }
 function practiceHTML(){
   var q=C.qs[C.qi],last=C.qi===C.qs.length-1;
-  var h=ch([['cd','Question '+(C.qi+1)+' of '+C.qs.length],['ch-big',q.label],['cd','Say it out loud, then type the answer.']],true);
+  var h=ch([['cd','Question '+(C.qi+1)+' of '+C.qs.length],[q.small?'ch-big sm':'ch-big',q.big||q.label],['cd','Say it out loud, then type the answer.']],true);
   h+='<div class="card">';
   if(!C.done){
     h+='<div class="row"><input id="ans" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="?" aria-label="Your answer" value="'+esc(C.val)+'"><button class="primary" id="chk">Check</button></div>';
@@ -788,16 +853,16 @@ function practiceHTML(){
     h+='</div>';
     for(var i=0;i<C.hints;i++)h+='<div class="hint">'+esc(q.hints[i])+'</div>';
   }else{
-    h+='<div class="res win">'+q.label+' = <b>'+q.ans+'</b></div><p>'+explainQ(q)+'</p>';
+    h+='<div class="res win">'+(q.resText||q.label)+' = <b>'+q.ans+'</b></div><p>'+explainQ(q)+'</p>';
     h+='<button class="primary wide" id="qnext">'+(last?'Finish':'Next question')+'</button>';
   }
   return h+'</div>';
 }
 function lessonHTML(){
   var st=C.step;
-  var h='<div class="top"><button class="ghost" id="back">\u2039 Back</button><div class="ttl">Lesson 1</div><button class="ghost" id="tsize" aria-label="Change text size">'+(S.big?'A\u2212':'A+')+'</button></div>';
+  var h='<div class="top"><button class="ghost" id="back">\u2039 Back</button><div class="ttl">Lesson '+(C.li+1)+'</div><button class="ghost" id="tsize" aria-label="Change text size">'+(S.big?'A\u2212':'A+')+'</button></div>';
   if(st<=5){
-    var step=L1[st],lines=(C.alt&&step.alt)?step.alt:step.board;
+    var step=LESSONS[C.li].steps[st],lines=(C.alt&&step.alt)?step.alt:step.board;
     h+=ch(lines,false);
     if(step.alt)h+='<button class="ghost altbtn" id="alt">'+(C.alt?'Back to the first way':'Show me another way')+'</button>';
     h+='<div class="lnav">'+(st>0?'<button class="ghost" id="prev">\u2039 Back</button>':'')+'<button class="primary" id="nxt">'+(st===5?'Start practice':'Next')+' \u203A</button></div>';
@@ -807,7 +872,7 @@ function lessonHTML(){
     h+='<div class="lnav" style="margin-top:12px"><button class="ghost" id="prev">\u2039 Back</button></div>';
     h+='<p class="muted sm center" style="margin-top:12px">'+(st===6?'Guided practice':'Mix it up')+', step '+(st+1)+' of 9</p>';
   }else{
-    h+=ch([['ch-title','Lesson 1 complete!'],['cw','You worked through doubles and triples.'],['cy','★ Stamp earned'],['cd','Come back anytime to practice. There is no rush.']],false);
+    h+=ch([['ch-title','Lesson '+(C.li+1)+' complete!'],['cw',LESSONS[C.li].done],['cy','★ Stamp earned'],['cd','Come back anytime to practice. There is no rush.']],false);
     h+='<div class="lnav"><button class="primary" id="done">Back to the classroom</button></div>';
   }
   return h;
@@ -821,7 +886,7 @@ function checkQ(){
 }
 function bindClass(){
   $('#back').onclick=function(){S.view='home';render();window.scrollTo(0,0);};
-  var l1=$('#l1');if(l1)l1.onclick=function(){S.view='lesson';goStep(0);};
+  LESSONS.forEach(function(l,i){var b=$('#'+l.id);if(b&&!l.soon)b.onclick=function(){C.li=i;S.view='lesson';goStep(0);};});
 }
 function bindLesson(){
   var q=function(s){return document.querySelector(s);};
