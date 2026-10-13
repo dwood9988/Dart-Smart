@@ -143,7 +143,23 @@ details.card p{margin:10px 0 0}
 .how p,.how li{font-size:16px}
 .how ul,.how ol{margin:0 0 6px;padding-left:20px}
 .how li{margin:3px 0}
-@media (prefers-reduced-motion:reduce){.dart,.chip{animation:none}}
+.btnrow{display:flex;gap:12px;margin:0 0 14px}
+.btnrow .howbtn{margin:0;flex:1;width:auto}
+.howbtn small{display:block;font:600 13px var(--body);letter-spacing:0;color:var(--ink2);margin-top:3px}
+.howbtn.ready{border-color:var(--gold)}
+.howbtn.ready small{color:var(--burg)}
+.primary:disabled{opacity:.5;cursor:default}
+.tbig{width:min(100%,300px);margin:8px auto}
+.tbig svg{display:block;width:100%;height:auto;border-radius:10px;border:3px solid var(--wood)}
+.glow svg{box-shadow:0 0 22px rgba(240,194,74,.75)}
+.done-title{font:400 28px var(--disp);color:var(--burg)}
+.shelf{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.tcase{text-align:center;font-size:13px;font-weight:600;line-height:1.2}
+.tcase svg{display:block;width:100%;height:auto;border-radius:8px;border:2px solid var(--wood);margin-bottom:4px}
+.tcase small{display:block;font-weight:400;color:var(--ink2)}
+.peel{transform-box:fill-box;transform-origin:center;animation:peel .9s ease-out forwards}
+@keyframes peel{from{opacity:1;transform:scale(1)}to{opacity:0;transform:scale(.85)}}
+@media (prefers-reduced-motion:reduce){.dart,.chip,.peel{animation:none}.peel{opacity:0}}
 </style>
 </head>
 <body>
@@ -165,9 +181,11 @@ function saveS(){try{var c=Object.assign({},S);delete c.view;localStorage.setIte
 var G=null;
 
 /* ---------- rewards (saved on this phone only) ---------- */
-var R={bulls:0,bestStreak:0,bestAcc:0,games:0,days:[],streak:0,bestDays:0,last:''};
+var R={bulls:0,bestStreak:0,bestAcc:0,games:0,days:[],streak:0,bestDays:0,last:'',tIdx:0,tPieces:[],tDone:[]};
 try{var sr=JSON.parse(localStorage.getItem('dmt_rewards')||'null');if(sr){R=Object.assign(R,sr);}}catch(e){}
 if(!Array.isArray(R.days))R.days=[];
+if(!Array.isArray(R.tPieces))R.tPieces=[];
+if(!Array.isArray(R.tDone))R.tDone=[];
 function saveR(){try{localStorage.setItem('dmt_rewards',JSON.stringify(R));}catch(e){}}
 function dstr(d){return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);}
 function dnum(s){var a=s.split('-');return Math.round(Date.UTC(+a[0],+a[1]-1,+a[2])/86400000);}
@@ -215,7 +233,11 @@ function earnHTML(){
   G.msgs.forEach(function(m){h+='<span class="earn">'+esc(m)+'</span>';});
   return h?'<div class="earns">'+h+'</div>':'';
 }
-function gameEarnHTML(){return G.rewards?'<p class="muted">You earned '+G.gameEarn+' bullseyes this game.</p>':'';}
+function gameEarnHTML(){
+  if(!G.rewards)return '';
+  var c=TROPHIES[R.tIdx];
+  return '<p class="muted">You earned '+G.gameEarn+' bullseyes this game.'+(c&&R.bulls>=c.cost?' You have enough for a trophy piece!':'')+'</p>';
+}
 function progressHTML(){
   if(!R.bulls&&!R.last)return '<p class="muted sm">Play a 1 player game to start collecting bullseyes.</p>';
   var t=dnum(dstr(new Date())),wk=0;
@@ -416,7 +438,7 @@ function homeHTML(){
     '<p class="tagline">Throw more, stress less.</p>'+
     '<button class="gametile" id="g501"><span class="gt-n">501</span><span class="gt-d">Count down to zero. 301 and 101 too.</span></button>'+
     '<button class="gametile" id="gcr"><span class="gt-n">Cricket</span><span class="gt-d">Close 20 to 15 and the bull, then score.</span></button>'+
-    '<button class="howbtn" id="ghow">How to play</button>'+
+    '<div class="btnrow"><button class="howbtn'+trophyReady()+'" id="gtro">Trophies<small>'+trophyProgress()+'</small></button><button class="howbtn" id="ghow">How to play</button></div>'+
     progressHTML()+
     '<p class="muted sm center">Random darts land on the board. You work out the score.</p>';
 }
@@ -450,6 +472,7 @@ function bindHome(){
   $('#g501').onclick=function(){S.mode='501';S.view='opts';saveS();render();window.scrollTo(0,0);};
   $('#gcr').onclick=function(){S.mode='cricket';S.view='opts';saveS();render();window.scrollTo(0,0);};
   $('#ghow').onclick=function(){S.view='how';render();window.scrollTo(0,0);};
+  $('#gtro').onclick=function(){S.view='trophies';TS.newPiece=-1;TS.justDone=null;render();window.scrollTo(0,0);};
 }
 function bindOpts(){
   function wire(id,fn){
@@ -493,13 +516,155 @@ function howHTML(){
   var tab=S.howTab||'501';
   var h='<div class="top"><button class="ghost" id="back">\u2039 Back</button><div class="ttl">How to play</div><div style="width:64px"></div></div>';
   h+='<div class="card">'+segBtns('segHow',[['501','501'],['cricket','Cricket']],tab)+(tab==='501'?how501():howCR())+'</div>';
-  h+='<details class="card sm"><summary>Bullseyes and streaks</summary><p>You earn 2 bullseyes for each answer you get right on the first try, and 1 for a right answer after a retry or a hint. Show answer earns none. You get a bonus for every 5 right in a row, and 5 more for finishing a game.</p><p>A practice day is any day you finish a round. Taking one day off will not break your streak.</p><p>Bullseyes and streaks count in 1 player games only. Hints are always free.</p></details>';
+  h+='<details class="card sm"><summary>Bullseyes and streaks</summary><p>You earn 2 bullseyes for each answer you get right on the first try, and 1 for a right answer after a retry or a hint. Show answer earns none. You get a bonus for every 5 right in a row, and 5 more for finishing a game.</p><p>A practice day is any day you finish a round. Taking one day off will not break your streak.</p><p>Bullseyes and streaks count in 1 player games only. Hints are always free.</p><p>Spend bullseyes on trophy puzzle pieces in the Trophies section. Bullseyes never expire, and nothing is ever taken away.</p></details>';
   return h;
 }
 function bindHow(){
   var el=document.querySelectorAll('#segHow button');
   for(var i=0;i<el.length;i++){(function(b){b.onclick=function(){S.howTab=b.dataset.v;saveS();render();};})(el[i]);}
   $('#back').onclick=function(){S.view='home';render();window.scrollTo(0,0);};
+}
+
+/* ---------- trophies ---------- */
+function starPts(cx,cy,ro,ri){var o=[];for(var i=0;i<10;i++){var r=i%2?ri:ro,a=-Math.PI/2+i*Math.PI/5;o.push((cx+r*Math.cos(a)).toFixed(1)+','+(cy+r*Math.sin(a)).toFixed(1));}return o.join(' ');}
+function boardBits(cx,cy,r){
+  var k=r/62;
+  function c(rr,fill,stroke,sw,dash){
+    var a='<circle cx="'+cx+'" cy="'+cy+'" r="'+(rr*k).toFixed(2)+'"';
+    a+=fill?' fill="'+fill+'"':' fill="none"';
+    if(stroke)a+=' stroke="'+stroke+'" stroke-width="'+(sw*k).toFixed(2)+'"';
+    if(dash){var d=(2*Math.PI*rr*k/20).toFixed(3);a+=' stroke-dasharray="'+d+' '+d+'" transform="rotate(-99 '+cx+' '+cy+')"';}
+    return a+'/>';
+  }
+  return c(62,'#1a1a1a')+c(57.6,'#f1e6c4')+c(28.8,null,'#1a1a1a',57.6,true)+c(59.8,null,'#1f8a57',4.4)+c(59.8,null,'#c8312b',4.4,true)+c(37.6,null,'#1f8a57',4)+c(37.6,null,'#c8312b',4,true)+c(7,'#1f8a57')+c(3.2,'#c8312b');
+}
+var BRONZE={m:'#b9763a',d:'#7e4a20',h:'#e8b07a',e:'#f6edd6'};
+var SILVER={m:'#c4ccd2',d:'#7f8b94',h:'#f5f8fa',e:'#c8312b'};
+var GOLD={m:'#e6b93a',d:'#a8790f',h:'#fde9a0',e:'#f6edd6'};
+function cupArt(c,lid,emblem){
+  var s='';
+  s+='<path d="M54 62C28 58 28 98 60 96" fill="none" stroke="'+c.d+'" stroke-width="7" stroke-linecap="round"/>';
+  s+='<path d="M126 62C152 58 152 98 120 96" fill="none" stroke="'+c.d+'" stroke-width="7" stroke-linecap="round"/>';
+  s+='<rect x="60" y="136" width="60" height="14" rx="3" fill="'+c.d+'"/><rect x="66" y="128" width="48" height="10" rx="3" fill="'+c.m+'"/>';
+  s+='<rect x="82" y="108" width="16" height="22" fill="'+c.m+'"/><ellipse cx="90" cy="112" rx="14" ry="5" fill="'+c.d+'"/>';
+  s+='<path d="M52 56H128C128 96 112 112 90 112C68 112 52 96 52 56Z" fill="'+c.m+'"/>';
+  s+='<path d="M64 64C64 86 72 100 82 105" fill="none" stroke="'+c.h+'" stroke-width="5" stroke-linecap="round" opacity=".7"/>';
+  s+='<rect x="48" y="50" width="84" height="9" rx="4" fill="'+c.d+'"/>';
+  if(lid)s+='<path d="M56 50C56 26 124 26 124 50Z" fill="'+c.m+'"/><circle cx="90" cy="25" r="5" fill="'+c.d+'"/><path d="M68 44C70 34 80 30 88 30" fill="none" stroke="'+c.h+'" stroke-width="4" stroke-linecap="round" opacity=".7"/>';
+  if(emblem==='star')s+='<polygon points="'+starPts(90,82,14,6)+'" fill="'+c.e+'"/>';
+  else s+='<circle cx="90" cy="82" r="13" fill="#c8312b"/><circle cx="90" cy="82" r="8.5" fill="#f6edd6"/><circle cx="90" cy="82" r="4" fill="#c8312b"/>';
+  return s;
+}
+function pintArt(){
+  var s='<rect x="52" y="136" width="76" height="14" rx="3" fill="#5a4129"/><rect x="60" y="128" width="60" height="10" rx="3" fill="#7a5a38"/>';
+  s+='<path d="M58 46H122L113 130H67Z" fill="#e8f1ef" opacity=".35"/>';
+  s+='<path d="M60 62H120L112 130H68Z" fill="#e3a72b"/>';
+  s+='<path d="M64 76L70 124" fill="none" stroke="#f6d27a" stroke-width="5" stroke-linecap="round" opacity=".8"/>';
+  s+='<circle cx="82" cy="100" r="2" fill="#f6d27a"/><circle cx="96" cy="88" r="2.4" fill="#f6d27a"/><circle cx="104" cy="112" r="2" fill="#f6d27a"/><circle cx="88" cy="118" r="1.8" fill="#f6d27a"/>';
+  s+='<circle cx="66" cy="56" r="9" fill="#fff7e0"/><circle cx="80" cy="50" r="11" fill="#fff7e0"/><circle cx="97" cy="48" r="12" fill="#fff7e0"/><circle cx="112" cy="54" r="10" fill="#fff7e0"/><circle cx="90" cy="58" r="12" fill="#fff7e0"/>';
+  s+='<path d="M58 46H122L113 130H67Z" fill="none" stroke="#dfe9e7" stroke-width="3" stroke-linejoin="round"/>';
+  s+='<rect x="74" y="138" width="32" height="8" rx="2" fill="#e6b93a"/>';
+  return s;
+}
+function dartArt(){
+  var g='#e6b93a',gd='#a8790f',gh='#fde9a0';
+  var s='<rect x="56" y="136" width="68" height="14" rx="3" fill="#5a4129"/><rect x="64" y="128" width="52" height="10" rx="3" fill="#7a5a38"/>';
+  s+='<path d="M90 128L85 114H95Z" fill="#cfd6db"/>';
+  s+='<path d="M84 114H96L99 78H81Z" fill="'+g+'"/>';
+  s+='<path d="M82 86H98M82 92H98M83 98H97M83 104H97" stroke="'+gd+'" stroke-width="1.6" fill="none"/>';
+  s+='<path d="M86 80L87 112" stroke="'+gh+'" stroke-width="2" fill="none" stroke-linecap="round"/>';
+  s+='<rect x="87" y="52" width="6" height="26" fill="#2a2f33"/>';
+  s+='<path d="M90 70L64 40L72 30L90 52Z" fill="#c8312b"/><path d="M90 70L116 40L108 30L90 52Z" fill="#8f1f1b"/>';
+  s+='<path d="M90 66L82 34L90 24L98 34Z" fill="'+g+'" stroke="'+gd+'" stroke-width="1.2" stroke-linejoin="round"/>';
+  s+='<rect x="76" y="139" width="28" height="7" rx="2" fill="'+g+'"/>';
+  return s;
+}
+function plaqueArt(){
+  var s='<rect x="26" y="20" width="128" height="124" rx="10" fill="#8b6b45" stroke="#4e3724" stroke-width="3"/><rect x="34" y="28" width="112" height="108" rx="6" fill="none" stroke="#b58d5c" stroke-width="1.5"/>';
+  s+=boardBits(90,78,40);
+  s+='<rect x="64" y="123" width="52" height="13" rx="2" fill="#e6b93a"/><rect x="70" y="127" width="40" height="2" fill="#8a6a10"/><rect x="74" y="131" width="32" height="1.6" fill="#8a6a10"/>';
+  return s;
+}
+var TROPHIES=[
+  {id:'bronze',name:'Bronze Cup',cost:15,art:function(){return cupArt(BRONZE,false,'star');}},
+  {id:'pint',name:'Pint of Glory',cost:20,art:pintArt},
+  {id:'silver',name:'Silver Cup',cost:25,art:function(){return cupArt(SILVER,false,'bull');}},
+  {id:'dart',name:'Golden Dart',cost:30,art:dartArt},
+  {id:'plaque',name:'Bullseye Plaque',cost:35,art:plaqueArt},
+  {id:'gold',name:'Champion Cup',cost:40,art:function(){return cupArt(GOLD,true,'star');}}
+];
+var TS={newPiece:-1,justDone:null};
+function trophySVG(t,rev,np){
+  var s='<svg viewBox="0 0 180 180" role="img" aria-label="'+esc(t.name)+'">';
+  s+='<rect width="180" height="180" fill="#164a31"/><circle cx="90" cy="84" r="78" fill="#1f6a45"/><circle cx="90" cy="84" r="52" fill="#25774e"/><rect y="150" width="180" height="30" fill="#8b6b45"/><rect y="150" width="180" height="3" fill="#b58d5c"/>';
+  s+=t.art();
+  if(rev==='locked'){
+    s+='<rect width="180" height="180" fill="#0b2418" opacity=".88"/><text x="90" y="112" text-anchor="middle" font-size="84" font-weight="700" fill="#b58d5c" opacity=".8" font-family="Barlow Condensed,Arial Narrow,sans-serif">?</text>';
+  }else if(rev!=='all'){
+    for(var i=0;i<9;i++){
+      var x=(i%3)*60,y=Math.floor(i/3)*60;
+      if(rev.indexOf(i)<0){
+        s+='<rect x="'+(x+1.5)+'" y="'+(y+1.5)+'" width="57" height="57" rx="6" fill="#143f2a" stroke="#b58d5c" stroke-width="1.5"/><text x="'+(x+30)+'" y="'+(y+41)+'" text-anchor="middle" font-size="30" font-weight="700" fill="#b58d5c" font-family="Barlow Condensed,Arial Narrow,sans-serif">?</text>';
+      }else if(i===np){
+        s+='<rect class="peel" x="'+(x+1.5)+'" y="'+(y+1.5)+'" width="57" height="57" rx="6" fill="#143f2a" stroke="#b58d5c" stroke-width="1.5"/>';
+      }
+    }
+    s+='<g stroke="rgba(255,255,255,.22)" stroke-width="1"><line x1="60" y1="0" x2="60" y2="180"/><line x1="120" y1="0" x2="120" y2="180"/><line x1="0" y1="60" x2="180" y2="60"/><line x1="0" y1="120" x2="180" y2="120"/></g>';
+  }
+  return s+'</svg>';
+}
+function trophyReady(){var c=TROPHIES[R.tIdx];return c&&R.bulls>=c.cost?' ready':'';}
+function trophyProgress(){
+  var c=TROPHIES[R.tIdx];
+  if(!c)return 'all collected';
+  return R.bulls>=c.cost?'piece ready!':R.tPieces.length+' of 9 pieces';
+}
+function trophiesHTML(){
+  var h='<div class="top"><button class="ghost" id="back">\u2039 Back</button><div class="ttl">Trophies</div><div class="bank">'+bullSVG(18)+' '+R.bulls+'</div></div>';
+  if(TS.justDone){
+    var jd=TROPHIES.filter(function(t){return t.id===TS.justDone;})[0];
+    h+='<div class="card center"><div class="done-title">Trophy complete!</div><div class="tbig glow">'+trophySVG(jd,'all')+'</div><p><b>'+esc(jd.name)+'</b> is on your shelf now.</p></div>';
+  }
+  var cur=TROPHIES[R.tIdx];
+  if(cur){
+    var can=R.bulls>=cur.cost;
+    h+='<div class="card"><div class="lbl">Now collecting: '+esc(cur.name)+'</div><div class="tbig">'+trophySVG(cur,R.tPieces,TS.newPiece)+'</div>';
+    h+='<p class="center muted">'+R.tPieces.length+' of 9 pieces</p>';
+    if(can)h+='<button class="primary wide" id="buy">Get a piece ('+cur.cost+' '+bullSVG(16)+')</button>';
+    else h+='<button class="primary wide" id="buy" disabled>Get a piece</button><p class="center muted sm" style="margin-top:8px">A piece costs '+cur.cost+' bullseyes. You are '+(cur.cost-R.bulls)+' away.</p>';
+    h+='<p class="muted sm center" style="margin:10px 0 0">Bullseyes never expire, and nothing is ever taken away.</p></div>';
+  }else{
+    h+='<div class="card center"><p><b>You have every trophy!</b></p><p class="muted sm">Keep playing for fun. You can still see your whole shelf below.</p></div>';
+  }
+  h+='<div class="card"><div class="lbl">Your shelf</div>';
+  if(!R.tDone.length)h+='<p class="muted sm" style="margin:0">Finished trophies will be displayed here.</p>';
+  else h+='<div class="shelf">'+R.tDone.map(function(id){
+    var t=TROPHIES.filter(function(x){return x.id===id;})[0];
+    return t?'<div class="tcase">'+trophySVG(t,'all')+esc(t.name)+'</div>':'';
+  }).join('')+'</div>';
+  h+='</div>';
+  var next=TROPHIES.slice(R.tIdx+1);
+  if(next.length){
+    h+='<div class="card"><div class="lbl">Coming up</div><div class="shelf">'+next.map(function(t){
+      return '<div class="tcase">'+trophySVG(t,'locked')+esc(t.name)+'<small>'+t.cost+' per piece</small></div>';
+    }).join('')+'</div></div>';
+  }
+  return h;
+}
+function buyPiece(){
+  var t=TROPHIES[R.tIdx];
+  if(!t||R.bulls<t.cost)return;
+  var left=[];for(var i=0;i<9;i++)if(R.tPieces.indexOf(i)<0)left.push(i);
+  var pick=left[Math.floor(Math.random()*left.length)];
+  R.bulls-=t.cost;R.tPieces.push(pick);
+  TS.newPiece=pick;TS.justDone=null;
+  if(R.tPieces.length>=9){R.tDone.push(t.id);TS.justDone=t.id;TS.newPiece=-1;R.tIdx++;R.tPieces=[];}
+  saveR();
+  render();
+}
+function bindTrophies(){
+  $('#back').onclick=function(){S.view='home';render();window.scrollTo(0,0);};
+  var b=$('#buy');if(b&&!b.disabled)b.onclick=buyPiece;
 }
 
 /* ---------- game flow ---------- */
@@ -527,7 +692,7 @@ function startTurn(first){
 function toMenu(){G=null;S.view='home';render();window.scrollTo(0,0);}
 function render(){
   var app=$('#app');
-  if(!G){if(S.view==='opts'){app.innerHTML=optsHTML();bindOpts();}else if(S.view==='how'){app.innerHTML=howHTML();bindHow();}else{app.innerHTML=homeHTML();bindHome();}return;}
+  if(!G){if(S.view==='opts'){app.innerHTML=optsHTML();bindOpts();}else if(S.view==='how'){app.innerHTML=howHTML();bindHow();}else if(S.view==='trophies'){app.innerHTML=trophiesHTML();bindTrophies();}else{app.innerHTML=homeHTML();bindHome();}return;}
   var np=G.players.length;
   app.innerHTML='<div class="top"><button class="ghost" id="menu">Menu</button><div class="ttl">'+(S.mode==='501'?S.start:'Cricket')+'</div><div class="bank" id="bank"></div></div>'+
     '<div class="rules">'+rulesLine()+'</div>'+
