@@ -194,7 +194,17 @@ details.card p{margin:10px 0 0}
 .op{font-style:normal;font-size:.68em;color:var(--gold)}
 .tcase svg.starsvg{border:0;border-radius:0}
 .ch-big.sm{font-size:52px;letter-spacing:0;line-height:1.1}
-@media (prefers-reduced-motion:reduce){.dart,.chip,.peel,.cl{animation:none}.peel{opacity:0}.cl{opacity:1}}
+.memgrid{display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;margin:4px 0 6px}
+.memgrid span{white-space:nowrap}
+.memgrid .mh{color:var(--gold);font-weight:700}
+.earnbig{display:flex;align-items:center;gap:8px;margin:0 0 8px;color:#b07d0a;font:700 52px/1 var(--num);text-shadow:0 2px 0 rgba(0,0,0,.12)}
+.earnbig svg{filter:drop-shadow(0 3px 3px rgba(0,0,0,.35))}
+.earnbig.pop{animation:popb .75s cubic-bezier(.2,1.5,.4,1)}
+@keyframes popb{0%{transform:scale(.35);opacity:0}60%{transform:scale(1.2);opacity:1}100%{transform:scale(1)}}
+.thad{font-size:11px;font-weight:600;color:var(--ink2);height:14px;white-space:nowrap}
+.tile.blk{background:#f2d9d4;border-color:var(--bad)}
+.blkstrip{color:var(--bad);font-weight:600;font-size:14px;margin:6px 0}
+@media (prefers-reduced-motion:reduce){.dart,.chip,.peel,.cl,.earnbig.pop{animation:none}.peel{opacity:0}.cl{opacity:1}}
 </style>
 </head>
 <body>
@@ -225,7 +235,7 @@ if(!Array.isArray(R.lessons))R.lessons=[];
 function saveR(){try{localStorage.setItem('dmt_rewards',JSON.stringify(R));}catch(e){}}
 function dstr(d){return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);}
 function dnum(s){var a=s.split('-');return Math.round(Date.UTC(+a[0],+a[1]-1,+a[2])/86400000);}
-function bullSVG(n){return '<svg width="'+n+'" height="'+n+'" viewBox="0 0 20 20" aria-hidden="true" style="vertical-align:-3px"><circle cx="10" cy="10" r="9.5" fill="#c8312b"/><circle cx="10" cy="10" r="6.5" fill="#f1e6c4"/><circle cx="10" cy="10" r="3.4" fill="#c8312b"/></svg>';}
+function bullSVG(n){return '<svg width="'+n+'" height="'+n+'" viewBox="0 0 20 20" aria-hidden="true" style="vertical-align:-3px"><circle cx="10" cy="10" r="9.8" fill="#1a1a1a"/><circle cx="10" cy="10" r="8.6" fill="#c8312b"/><circle cx="10" cy="10" r="6.6" fill="#f1e6c4"/><circle cx="10" cy="10" r="4.8" fill="#1f8a57"/><circle cx="10" cy="10" r="3" fill="#f1e6c4"/><circle cx="10" cy="10" r="1.6" fill="#c8312b"/><path d="M4 6.6A7 7 0 0 1 8.6 3.2" fill="none" stroke="#fff" stroke-width="1.3" stroke-linecap="round" opacity=".6"/></svg>';}
 function liveStreak(){
   if(!R.last)return 0;
   return dnum(dstr(new Date()))-dnum(R.last)>2?0:R.streak;
@@ -241,7 +251,7 @@ function touchToday(){
   R.days.push(t);if(R.days.length>60)R.days=R.days.slice(-60);
   R.last=t;saveR();
 }
-function earn(n){R.bulls+=n;G.turnEarn+=n;G.gameEarn+=n;saveR();}
+function earn(n){R.bulls+=n;G.turnEarn+=n;G.gameEarn+=n;G.earnFresh=true;saveR();}
 function rewardAnswer(good,first,p){
   touchToday();
   if(!good)return;
@@ -265,9 +275,9 @@ function rewardGame(){
 function earnHTML(){
   if(!G.rewards)return '';
   var h='';
-  if(G.turnEarn>0)h+='<span class="earn">+'+G.turnEarn+' '+bullSVG(14)+'</span>';
+  var big='';if(G.turnEarn>0){big='<div class="earnbig'+(G.earnFresh?' pop':'')+'"><span>+'+G.turnEarn+'</span>'+bullSVG(34)+'</div>';G.earnFresh=false;}
   G.msgs.forEach(function(m){h+='<span class="earn">'+esc(m)+'</span>';});
-  return h?'<div class="earns">'+h+'</div>':'';
+  return big+(h?'<div class="earns">'+h+'</div>':'');
 }
 function gameEarnHTML(){
   if(!G.rewards)return '';
@@ -449,7 +459,7 @@ function describeCR(d){
 function chipsHTML(darts){
   var h=darts.map(function(d,i){
     var cls=d.kind==='seg'?({1:'s',2:'d',3:'t'})[d.mult]:d.kind;
-    return '<div class="chip c-'+cls+'" style="animation-delay:'+(i*0.5+0.15)+'s"><i>'+(i+1)+'</i>'+esc(d.label)+'</div>';
+    return '<div class="chip c-'+cls+'" style="animation-delay:'+(i*0.5+0.15)+'s">'+esc(d.label)+'</div>';
   }).join('');
   if(darts.length<3)h+='<div class="chipnote">Only '+darts.length+' dart'+(darts.length>1?'s':'')+' thrown this round.</div>';
   return h;
@@ -475,8 +485,7 @@ function homeHTML(){
     '<button class="gametile" id="g501"><span class="gt-n">501</span><span class="gt-d">Count down to zero. 301 and 101 too.</span></button>'+
     '<button class="gametile" id="gcr"><span class="gt-n">Cricket</span><span class="gt-d">Close 20 to 15 and the bull, then score.</span></button>'+
     '<button class="chalktile" id="gcl"><span class="ct-t">Classroom</span><span class="ct-d">Mental math tricks, step by step</span></button>'+
-    '<div class="btnrow"><button class="howbtn'+trophyReady()+'" id="gtro">Trophies<small>'+trophyProgress()+'</small></button><button class="howbtn" id="ghow">How to play</button></div>'+
-    progressHTML()+
+    '<div class="btnrow"><button class="howbtn'+trophyReady()+'" id="gtro">Trophy Case<small>'+trophyProgress()+'</small></button><button class="howbtn" id="ghow">How to play</button></div>'+
     '<p class="muted sm center">Random darts land on the board. You work out the score.</p>';
 }
 function optsHTML(){
@@ -485,7 +494,7 @@ function optsHTML(){
   var h='<div class="top"><button class="ghost" id="back">\u2039 Back</button><div class="ttl">'+(is501?S.start:'Cricket')+'</div><div style="width:64px"></div></div>';
   h+='<div class="card"><div class="lbl">Players</div>'+segBtns('segPlayers',[[1,'1 player'],[2,'2 players']],S.players);
   if(S.players===2){
-    h+='<div class="lbl">Names</div><div class="names"><input id="n0" maxlength="14" aria-label="Player 1 name" value="'+esc(S.names[0])+'"><input id="n1" maxlength="14" aria-label="Player 2 name" value="'+esc(S.names[1])+'"></div>';
+    h+='<div class="lbl">Names</div><div class="names"><input id="n0" maxlength="14" autocomplete="off" autocorrect="off" spellcheck="false" name="dart-p1" aria-label="Player 1 name" value="'+esc(S.names[0])+'"><input id="n1" maxlength="14" autocomplete="off" autocorrect="off" spellcheck="false" name="dart-p2" aria-label="Player 2 name" value="'+esc(S.names[1])+'"></div>';
   }
   if(is501){
     h+='<div class="lbl">Starting score</div>'+segBtns('segStart',[[501,'501'],[301,'301'],[101,'101 (quick)']],S.start);
@@ -554,7 +563,7 @@ function howHTML(){
   var tab=S.howTab||'501';
   var h='<div class="top"><button class="ghost" id="back">\u2039 Back</button><div class="ttl">How to play</div><div style="width:64px"></div></div>';
   h+='<div class="card">'+segBtns('segHow',[['501','501'],['cricket','Cricket']],tab)+(tab==='501'?how501():howCR())+'</div>';
-  h+='<details class="card sm"><summary>Bullseyes and streaks</summary><p>You earn 2 bullseyes for each answer you get right on the first try, and 1 for a right answer after a retry or a hint. Show answer earns none. You get a bonus for every 5 right in a row, and 5 more for finishing a game.</p><p>A practice day is any day you finish a round. Taking one day off will not break your streak.</p><p>Bullseyes and streaks count in 1 player games only. Hints are always free.</p><p>Spend bullseyes on trophy puzzle pieces in the Trophies section. Bullseyes never expire, and nothing is ever taken away.</p></details>';
+  h+='<details class="card sm"><summary>Bullseyes and streaks</summary><p>You earn 2 bullseyes for each answer you get right on the first try, and 1 for a right answer after a retry or a hint. Show answer, which appears after a wrong try, earns none. You get a bonus for every 5 right in a row, and 5 more for finishing a game.</p><p>A practice day is any day you finish a round. Taking one day off will not break your streak.</p><p>Bullseyes and streaks count in 1 player games only. Hints are always free.</p><p>Spend bullseyes on trophy puzzle pieces in the Trophy Case. Bullseyes never expire, and nothing is ever taken away.</p></details>';
   return h;
 }
 function bindHow(){
@@ -658,7 +667,8 @@ function trophyProgress(){
   return R.bulls>=c.cost?'piece ready!':R.tPieces.length+' of 9 pieces';
 }
 function trophiesHTML(){
-  var h='<div class="top"><button class="ghost" id="back">\u2039 Back</button><div class="ttl">Trophies</div><div class="bank">'+bullSVG(18)+' '+R.bulls+'</div></div>';
+  var h='<div class="top"><button class="ghost" id="back">\u2039 Back</button><div class="ttl">Trophy Case</div><div class="bank">'+bullSVG(18)+' '+R.bulls+'</div></div>';
+  h+=progressHTML();
   if(TS.justDone){
     var jd=TROPHIES.filter(function(t){return t.id===TS.justDone;})[0];
     h+='<div class="card center"><div class="done-title">Trophy complete!</div><div class="tbig glow">'+trophySVG(jd,'all')+'</div><p><b>'+esc(jd.name)+'</b> is on your shelf now.</p></div>';
@@ -714,14 +724,15 @@ var LESSONS=[
 ];
 var C={li:0,step:0,alt:false,qs:[],qi:0,attempts:0,hints:0,fb:'',fbc:'',done:false,val:''};
 var WGRID='<div class="wgrid">'+[1,2,3,4,5,6,7,8,9,10].map(function(n){return '<span>'+n+' <i class="op">×2 →</i> '+(2*n)+'</span>';}).join('')+'</div>';
+var MEM='<div class="memgrid"><b class="mh">Triples</b><b class="mh">Doubles</b>'+[20,19,18,17,16,15].map(function(n){return '<span>T'+n+' = '+(3*n)+'</span><span>D'+n+' = '+(2*n)+'</span>';}).join('')+'</div>';
 var L1=[
   {board:[['ch-title','Doubles and triples'],['cw','Goal: see D14 or T17 on the board and know the score without panic.'],['cd','No timer. Slow and sure beats fast and guessing.']]},
   {board:[['ch-title','Warm-up'],['cw','Double each number. Double means ×2.'],['cw',WGRID],['cd','Say them out loud once or twice. They are the building blocks for everything else.']]},
   {board:[['ch-title','Doubles'],['cw','A double is twice the number. Split big numbers first.'],['cy','D14'],['cw','double 10 is 20'],['cw','double 4 is 8'],['cw','20 + 8 = 28'],['cy','D17'],['cw','double 10 is 20'],['cw','double 7 is 14'],['cw','20 + 14 = 34'],['cd','Shortcut: D19 is just under D20 (40). Take off 2 and you get 38.']],
    alt:[['ch-title','Doubles, another way'],['cw','A double is a number added to itself.'],['cy','D14'],['cw','14 + 10 = 24'],['cw','24 + 4 = 28'],['cy','D17'],['cw','break 17 into 10, 5 and 2'],['cw','double each: 20, 10 and 4'],['cw','20 + 10 + 4 = 34'],['cd','Use whichever way feels natural. Both get you there.']]},
   {board:[['ch-title','Triples'],['cw','A triple is a double, plus the number one more time.'],['cy','T17'],['cw','double 17 is 34'],['cw','34 + 10 = 44'],['cw','44 + 7 = 51'],['cd','Shortcut: T20 is 60. T19 is 3 less (57) and T18 is 6 less (54).']],
-   alt:[['ch-title','Triples, another way'],['cy','T17'],['cw','seven times 3 is 21'],['cw','ten times 3 is 30'],['cw','30 + 21 = 51'],['cd','Same answer, different path.']]},
-  {board:[['ch-title','Worth memorizing'],['cw','T20 = 60'],['cw','T19 = 57'],['cw','T18 = 54'],['cw','T17 = 51'],['cw','T16 = 48'],['cw','T15 = 45'],['cd','These are the Cricket numbers.']]},
+   alt:[['ch-title','Triples, another way'],['cy','T17'],['cw','7 times 3 is 21'],['cw','10 times 3 is 30'],['cw','30 + 21 = 51'],['cd','Same answer, different path.']]},
+  {board:[['ch-title','Worth memorizing'],['cw',MEM],['cd','These are the Cricket numbers.']]},
   {board:[['ch-title','Say it out loud'],['cw','Before you answer, talk it through like you are telling a friend:'],['cy','“T17. Double is 34. Plus 17 is 51.”'],['cd','At the board, nobody is waiting for you to write it down. So practice saying it out loud and doing it in your head!']]}
 ];
 // steps 0 to 5 are chalkboard pages, 6 is guided practice, 7 is mixed practice, 8 is the finish
@@ -833,7 +844,7 @@ function starsHTML(){
 function classHTML(){
   var h='<div class="top"><button class="ghost" id="back">\u2039 Back</button><div class="ttl">Classroom</div><div style="width:64px"></div></div>';
   h+='<div class="chalkboard big still"><div class="cl ch-title">Classroom</div><div class="cl cw">Pick a lesson. No timers, no grades. Take your time.</div><div class="cl cy">3 × 20 = 60</div></div>';
-  h+='<p class="muted sm center">Gold stars earned: '+R.lessons.length+' of '+LESSONS.length+'. They show up on your Trophies page too.</p>';
+  h+='<p class="muted sm center">Gold stars earned: '+R.lessons.length+' of '+LESSONS.length+'. They show up in your Trophy Case too.</p>';
   LESSONS.forEach(function(l){
     var done=R.lessons.indexOf(l.id)>=0;
     h+='<button class="lessonbtn'+(l.soon?' soon':'')+'" id="'+l.id+'"'+(l.soon?' disabled':'')+'>'+(done?'<span class="stamp" aria-label="Completed">★</span>':'')+'<b>'+esc(l.title)+'</b><small>'+esc(l.sub)+'</small></button>';
@@ -845,11 +856,11 @@ function practiceHTML(){
   var h=ch([['cd','Question '+(C.qi+1)+' of '+C.qs.length],[q.small?'ch-big sm':'ch-big',q.big||q.label],['cd','Say it out loud, then type the answer.']],true);
   h+='<div class="card">';
   if(!C.done){
-    h+='<div class="row"><input id="ans" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="?" aria-label="Your answer" value="'+esc(C.val)+'"><button class="primary" id="chk">Check</button></div>';
+    h+='<div class="row"><input id="ans" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="done" name="dart-answer" placeholder="?" aria-label="Your answer" value="'+esc(C.val)+'"><button class="primary" id="chk">Check</button></div>';
     if(C.fb)h+='<div class="fb '+C.fbc+'">'+C.fb+'</div>';
     h+='<div class="row2">';
     if(q.hints.length>C.hints)h+='<button class="ghost" id="hintbtn">'+(C.hints?'Another hint':'Need a hint?')+'</button>';
-    if(C.attempts>=2)h+='<button class="ghost" id="reveal">Show answer</button>';
+    if(C.attempts>=1)h+='<button class="ghost" id="reveal">Show answer</button>';
     h+='</div>';
     for(var i=0;i<C.hints;i++)h+='<div class="hint">'+esc(q.hints[i])+'</div>';
   }else{
@@ -974,11 +985,11 @@ function wrongAns(v,exp){
   G.fb='Not quite. '+v+' is a bit '+(v>exp?'high':'low')+'. Try again.';
 }
 function inputRow(){
-  return '<div class="row"><input id="ans" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="?" aria-label="Your answer" value="'+esc(G.lastVal)+'"><button class="primary" id="chk">Check</button></div>';
+  return '<div class="row"><input id="ans" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="done" name="dart-answer" placeholder="?" aria-label="Your answer" value="'+esc(G.lastVal)+'"><button class="primary" id="chk">Check</button></div>';
 }
 function fbH(){return G.fb?'<div class="fb '+G.fbc+'">'+G.fb+'</div>':'';}
 function helpH(txt){
-  return '<div class="row2"><button class="ghost" id="hintbtn">'+(G.hint?'Hide hint':'Need a hint?')+'</button>'+(G.attempts>=2?'<button class="ghost" id="reveal">Show answer</button>':'')+'</div>'+(G.hint?'<div class="hint">'+txt+'</div>':'');
+  return '<div class="row2"><button class="ghost" id="hintbtn">'+(G.hint?'Hide hint':'Need a hint?')+'</button>'+(G.attempts>=1?'<button class="ghost" id="reveal">Show answer</button>':'')+'</div>'+(G.hint?'<div class="hint">'+txt+'</div>':'');
 }
 function summaryHTML(){
   return '<ul class="lines">'+G.players.map(function(p){
@@ -1048,13 +1059,18 @@ function finish501(){
 }
 
 /* ---------- cricket panel ---------- */
+function blkStrip(){
+  if(S.diff!=='easy')return '';
+  var l=CR.filter(function(n){return oppBlocked(n);});
+  return l.length?'<p class="blkstrip">No points on '+l.map(nm).join(', ')+' because the opponent closed '+(l.length>1?'them':'it')+'.</p>':'';
+}
 function tilesHTML(locked){
   var p=P(),o=O();
   return '<div class="tiles">'+CR.map(function(n){
-    var bad=G.wrong.indexOf(n)>=0,opp;
-    if(o){var m=o.marks[n];opp='<div class="topp'+(m>=3?' cl':'')+'">opp '+GL[Math.min(3,m)]+'</div>';}
-    else opp='<div class="topp cl">'+(G.bot.has(n)?'opp ⊗':'')+'</div>';
-    return '<div class="tile'+(bad?' bad':'')+'"><div class="tnum">'+nm(n)+'</div><div class="tg">'+GL[Math.min(3,p.marks[n]+G.add[n])]+'</div>'+opp+
+    var bad=G.wrong.indexOf(n)>=0,opp,blk=o?o.marks[n]>=3:G.bot.has(n),strong=blk&&S.diff!=='hard';
+    if(o){var m=o.marks[n];opp='<div class="topp'+(m>=3?' cl':'')+'">'+(strong?'no pts':'opp '+GL[Math.min(3,m)])+'</div>';}
+    else opp='<div class="topp cl">'+(blk?(strong?'no pts':'opp ⊗'):'')+'</div>';
+    return '<div class="tile'+(bad?' bad':'')+(strong?' blk':'')+'"><div class="tnum">'+nm(n)+'</div><div class="tg">'+GL[Math.min(3,p.marks[n]+G.add[n])]+'</div><div class="thad">had '+p.marks[n]+'</div>'+opp+
       (locked?'':'<button data-n="'+n+'" data-d="1" aria-label="Add a mark on '+nm(n)+'">+</button>')+
       '<div class="tadd">'+(p.marks[n]+G.add[n])+'</div>'+
       (locked?'':'<button data-n="'+n+'" data-d="-1" aria-label="Remove a mark on '+nm(n)+'">−</button>')+'</div>';
@@ -1063,11 +1079,11 @@ function tilesHTML(locked){
 function panelCR(){
   var t=G.turn,p=P(),h='';
   if(G.step==='marks'){
-    h+='<p class="q">Add your new marks. Each counter starts at what you already have, so tap + for every mark these three darts earned.</p>'+tilesHTML(false);
+    h+='<p class="q">Add your new marks. Each counter starts at what you already have, so tap + for every mark these three darts earned.</p>'+tilesHTML(false)+blkStrip();
     h+='<p class="muted sm">⊗ means closed (3 marks or more). Below each symbol is your opponent\'s; red means they\'ve closed it, so no points there.</p>';
     h+='<button class="primary wide" id="chk">Check marks</button>'+fbH()+helpH(t.darts.map(describeCR).map(esc).join('<br>'));
   }else if(G.step==='points'){
-    h+=tilesHTML(true)+'<p class="q">How many points did this round score?</p>';
+    h+=tilesHTML(true)+blkStrip()+'<p class="q">How many points did this round score?</p>';
     h+='<p class="muted sm">Once a number is closed (3 marks), each extra mark scores its value, unless your opponent has closed it too. Bull is worth 25.</p>';
     var hl=t.detail.filter(function(d){return d.add>0;}).map(function(d){
       if(d.sc===0)return nm(d.n)+': you had '+d.before+', added '+d.add+'. No marks past three.';
