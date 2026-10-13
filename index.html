@@ -204,6 +204,27 @@ details.card p{margin:10px 0 0}
 .thad{font-size:11px;font-weight:600;color:var(--ink2);height:14px;white-space:nowrap}
 .tile.blk{background:#f2d9d4;border-color:var(--bad)}
 .blkstrip{color:var(--bad);font-weight:600;font-size:14px;margin:6px 0}
+.howbtn .casesvg{display:block;margin:0 auto 4px}
+.oppline{background:var(--paper2);border-left:5px solid var(--wood);padding:8px 10px;border-radius:6px;margin:0 0 10px;font-size:16px}
+.histsvg{display:block;width:100%;height:auto;margin-top:4px}
+.praise{display:flex;align-items:center;gap:12px;background:var(--paper2);border:2px solid var(--gold);border-radius:12px;padding:8px 12px;margin:0 0 10px}
+.praise b{display:block;font:700 28px/1 var(--num);color:var(--burg)}
+.praise span{font-size:15px;color:var(--ink2)}
+.praise.pop{animation:popb .75s cubic-bezier(.2,1.5,.4,1)}
+.mascot{width:58px;height:58px;flex:none}
+.praise.pop .mascot{animation:wiggle .5s ease-in-out 3}
+@keyframes wiggle{0%,100%{transform:rotate(-7deg)}50%{transform:rotate(7deg)}}
+@media (prefers-reduced-motion:reduce){.praise.pop,.praise.pop .mascot{animation:none}}
+.sktile{display:block;width:100%;text-align:left;margin:0 0 14px;padding:12px 18px 14px;background:var(--paper);color:var(--ink);border:3px solid var(--wood);border-radius:10px;box-shadow:0 4px 0 var(--wood-dk),0 10px 16px rgba(0,0,0,.35)}
+.sktile:active{transform:translateY(2px)}
+.sk-t{display:block;font:700 42px/1 var(--num)}
+.sk-d{display:block;font-size:15px;color:var(--ink2);margin-top:2px}
+.numgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:10px 0 6px}
+.numrow{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:0 0 6px}
+.numgrid button,.numrow button{min-height:48px;border:2px solid var(--wood-lt);border-radius:8px;background:var(--paper2);color:var(--ink);font:700 24px var(--num);padding:0}
+.numrow button{font-size:20px}
+.numgrid button:active,.numrow button:active{background:var(--burg);color:var(--cream)}
+.numgrid button:disabled,.numrow button:disabled{opacity:.4}
 @media (prefers-reduced-motion:reduce){.dart,.chip,.peel,.cl,.earnbig.pop{animation:none}.peel{opacity:0}.cl{opacity:1}}
 </style>
 </head>
@@ -222,7 +243,7 @@ var S={mode:'501',diff:'medium',start:501,players:1,dIn:false,dOut:true,names:['
 try{var saved=JSON.parse(localStorage.getItem('dmt2')||'null');if(saved){S=Object.assign(S,saved);}}catch(e){}
 if(!Array.isArray(S.names)||S.names.length<2)S.names=['Player 1','Player 2'];
 S.view='home';
-function saveS(){try{var c=Object.assign({},S);delete c.view;localStorage.setItem('dmt2',JSON.stringify(c));}catch(e){}}
+function saveS(){try{var c=Object.assign({},S);delete c.view;delete c.sk;localStorage.setItem('dmt2',JSON.stringify(c));}catch(e){}}
 var G=null;
 
 /* ---------- rewards (saved on this phone only) ---------- */
@@ -252,8 +273,34 @@ function touchToday(){
   R.last=t;saveR();
 }
 function earn(n){R.bulls+=n;G.turnEarn+=n;G.gameEarn+=n;G.earnFresh=true;saveR();}
+var PRAISE=[[30,'Legendary!','crown'],[25,'You’re a genius!','bulb'],[20,'Einstein level!','pro'],[15,'On fire!','fire'],[10,'Sharp!','bolt'],[5,'Nice work!','star']];
+function praiseFor(n){for(var i=0;i<PRAISE.length;i++)if(n>=PRAISE[i][0])return PRAISE[i];return [0,'Nice!','star'];}
+function setPraise(kind,title,sub){G.praise={kind:kind,title:title,sub:sub};G.praiseFresh=true;}
+function mascot(k){
+  var h='<svg class="mascot" viewBox="0 0 48 48" aria-hidden="true">';
+  if(k==='star'){
+    h+='<polygon points="'+starPts(24,25,22,10)+'" fill="#f0c24a" stroke="#c99a2e" stroke-width="1.5" stroke-linejoin="round"/><circle cx="18.5" cy="24" r="1.9" fill="#3a2a10"/><circle cx="29.5" cy="24" r="1.9" fill="#3a2a10"/><path d="M19.5 30Q24 34.5 28.5 30" fill="none" stroke="#3a2a10" stroke-width="1.8" stroke-linecap="round"/><circle cx="15.5" cy="29" r="2" fill="#f2a08a" opacity=".7"/><circle cx="32.5" cy="29" r="2" fill="#f2a08a" opacity=".7"/>';
+  }else if(k==='bolt'){
+    h+='<polygon points="28,2 10,27 21,27 17,46 38,19 26,19" fill="#f0c24a" stroke="#c99a2e" stroke-width="1.6" stroke-linejoin="round"/><path d="M40 5v6M37 8h6M8 38v5M5.5 40.5h5" stroke="#c99a2e" stroke-width="2" stroke-linecap="round"/>';
+  }else if(k==='fire'){
+    h+='<path d="M24 3C26 12 38 16 38 30C38 39 31 45 24 45C17 45 10 39 10 30C10 22 15 19 17 12C20 15 21 18 21 18C22 12 22 8 24 3Z" fill="#f2552c" stroke="#b83a17" stroke-width="1.4" stroke-linejoin="round"/><path d="M24 20C25 26 31 28 31 35C31 40 28 43 24 43C20 43 17 40 17 35C17 29 22 27 24 20Z" fill="#ffc93c"/><circle cx="21" cy="35" r="1.6" fill="#3a2a10"/><circle cx="27" cy="35" r="1.6" fill="#3a2a10"/><path d="M21 39Q24 42 27 39" fill="none" stroke="#3a2a10" stroke-width="1.5" stroke-linecap="round"/>';
+  }else if(k==='pro'){
+    h+='<circle cx="9" cy="22" r="6" fill="#f4f4f4" stroke="#c9c9c9"/><circle cx="39" cy="22" r="6" fill="#f4f4f4" stroke="#c9c9c9"/><circle cx="13" cy="12" r="6.5" fill="#f4f4f4" stroke="#c9c9c9"/><circle cx="24" cy="8" r="7.5" fill="#f4f4f4" stroke="#c9c9c9"/><circle cx="35" cy="12" r="6.5" fill="#f4f4f4" stroke="#c9c9c9"/><circle cx="24" cy="27" r="13" fill="#f7d5b5" stroke="#d9a984"/><path d="M13 17Q24 7 35 17Q24 13 13 17Z" fill="#f4f4f4" stroke="#c9c9c9"/><circle cx="19" cy="25" r="1.8" fill="#222"/><circle cx="29" cy="25" r="1.8" fill="#222"/><path d="M15 21Q19 18 22 21M26 21Q29 18 33 21" fill="none" stroke="#9a9a9a" stroke-width="2" stroke-linecap="round"/><circle cx="24" cy="29" r="2" fill="#e5b995"/><path d="M14 34Q19 30 24 34Q29 30 34 34Q30 40 24 37Q18 40 14 34Z" fill="#7a7a7a"/>';
+  }else if(k==='bulb'){
+    h+='<path d="M24 2v4M8 8l3 3M40 8l-3 3M3 20h4M41 20h4" stroke="#f0c24a" stroke-width="2" stroke-linecap="round"/><circle cx="24" cy="21" r="13" fill="#ffe27a" stroke="#d6a91f" stroke-width="1.5"/><rect x="18" y="32" width="12" height="7" rx="1.5" fill="#c8ccd0" stroke="#8b949a"/><path d="M19 35.5h10" stroke="#8b949a"/><rect x="20" y="39" width="8" height="4" rx="2" fill="#8b949a"/><circle cx="19" cy="19" r="1.8" fill="#3a2a10"/><circle cx="29" cy="19" r="1.8" fill="#3a2a10"/><path d="M19.5 25Q24 29.5 28.5 25" fill="none" stroke="#3a2a10" stroke-width="1.8" stroke-linecap="round"/>';
+  }else{
+    h+='<polygon points="5,38 7,14 17,25 24,10 31,25 41,14 43,38" fill="#f0c24a" stroke="#b88a17" stroke-width="1.6" stroke-linejoin="round"/><rect x="5" y="38" width="38" height="6" rx="2" fill="#d9a82a" stroke="#b88a17"/><circle cx="7" cy="13" r="3" fill="#c8312b"/><circle cx="24" cy="9" r="3.4" fill="#c8312b"/><circle cx="41" cy="13" r="3" fill="#c8312b"/><circle cx="24" cy="41" r="2" fill="#1f8a57"/><circle cx="15" cy="41" r="1.4" fill="#fff" opacity=".6"/><circle cx="33" cy="41" r="1.4" fill="#fff" opacity=".6"/>';
+  }
+  return h+'</svg>';
+}
+function praiseBanner(){
+  if(!G.praise)return '';
+  var pop=G.praiseFresh;G.praiseFresh=false;
+  return '<div class="praise'+(pop?' pop':'')+'">'+mascot(G.praise.kind)+'<div><b>'+esc(G.praise.title)+'</b><span>'+esc(G.praise.sub)+'</span></div></div>';
+}
 function rewardAnswer(good,first,p){
   touchToday();
+  R.qn=(R.qn||0)+1;if(first)R.qf=(R.qf||0)+1;
   if(!good)return;
   earn(first?2:1);
   if(first){
@@ -261,14 +308,18 @@ function rewardAnswer(good,first,p){
       var had=R.bestStreak;R.bestStreak=p.streak;
       if(p.streak>=3&&had>=3)G.msgs.push('New personal best: '+p.streak+' in a row');
     }
-    if(p.streak%5===0){var b=p.streak>=20?10:p.streak>=10?5:3;earn(b);G.msgs.push(p.streak+' in a row! Bonus +'+b);}
+    if(p.streak%5===0){var b=p.streak>=20?10:p.streak>=10?5:3;earn(b);var pr=praiseFor(p.streak);setPraise(pr[2],pr[1],p.streak+' in a row. Bonus +'+b);}
   }
   saveR();
 }
 function rewardGame(){
   var p=G.players[0];
-  earn(5);G.msgs.push('Game finished! Bonus +5');R.games++;
+  earn(5);R.games++;
   var acc=p.q?Math.round(100*p.ft/p.q):0;
+  var gk=p.q>=5&&acc>=90?['pro','Einstein level!']:p.q>=5&&acc>=75?['bolt','Sharp game!']:['star','Game finished!'];
+  setPraise(gk[0],gk[1],'Game finished. Bonus +5');
+  if(!Array.isArray(R.hist))R.hist=[];
+  if(p.q>0){R.hist.push(acc);if(R.hist.length>30)R.hist=R.hist.slice(-30);}
   if(p.q>=10&&acc>R.bestAcc){var had=R.bestAcc;R.bestAcc=acc;if(had>0)G.msgs.push('New best accuracy: '+acc+'%');}
   saveR();
 }
@@ -277,7 +328,7 @@ function earnHTML(){
   var h='';
   var big='';if(G.turnEarn>0){big='<div class="earnbig'+(G.earnFresh?' pop':'')+'"><span>+'+G.turnEarn+'</span>'+bullSVG(34)+'</div>';G.earnFresh=false;}
   G.msgs.forEach(function(m){h+='<span class="earn">'+esc(m)+'</span>';});
-  return big+(h?'<div class="earns">'+h+'</div>':'');
+  return big+praiseBanner()+(h?'<div class="earns">'+h+'</div>':'');
 }
 function gameEarnHTML(){
   if(!G.rewards)return '';
@@ -285,12 +336,29 @@ function gameEarnHTML(){
   return '<p class="muted">You earned '+G.gameEarn+' bullseyes this game.'+(c&&R.bulls>=c.cost?' You have enough for a trophy piece!':'')+'</p>';
 }
 function progressHTML(){
-  if(!R.bulls&&!R.last)return '<p class="muted sm">Play a 1 player game to start collecting bullseyes.</p>';
+  if(!R.bulls&&!R.last&&!R.games)return '<div class="card"><div class="lbl">Your progress</div><p class="muted sm" style="margin:0">Play a 1 player game to start collecting bullseyes and see your stats here.</p></div>';
   var t=dnum(dstr(new Date())),wk=0;
   R.days.forEach(function(d){var g=t-dnum(d);if(g>=0&&g<=6)wk++;});
-  return '<div class="card"><div class="statrow"><div><b>'+bullSVG(26)+' '+R.bulls+'</b><span>bullseyes</span></div><div><b>'+liveStreak()+'</b><span>day streak</span></div><div><b>'+R.bestStreak+'</b><span>best in a row</span></div></div><p class="muted sm" style="margin:10px 0 0">Practiced '+wk+' of the last 7 days. One day off won\'t break your streak.'+(R.bestAcc?' Best accuracy: '+R.bestAcc+'%.':'')+'</p></div>';
+  var rate=R.qn?Math.round(100*(R.qf||0)/R.qn)+'%':'–';
+  var h='<div class="card"><div class="lbl">Your progress</div>';
+  h+='<div class="statrow"><div><b>'+bullSVG(26)+' '+R.bulls+'</b><span>bullseyes</span></div><div><b>'+liveStreak()+'</b><span>day streak</span></div><div><b>'+R.bestStreak+'</b><span>best in a row</span></div></div>';
+  h+='<div class="statrow" style="margin-top:12px"><div><b>'+(R.games||0)+'</b><span>games finished</span></div><div><b>'+rate+'</b><span>right first try</span></div><div><b>'+(R.bestAcc?R.bestAcc+'%':'–')+'</b><span>best game</span></div></div>';
+  var hist=(R.hist||[]).slice(-12);
+  if(hist.length>=2){
+    var n=hist.length,bw=(300-(n-1)*5)/n,bars=hist.map(function(a,i){
+      var ht=Math.max(3,a*0.6);
+      return '<rect x="'+(i*(bw+5)).toFixed(1)+'" y="'+(66-ht).toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+ht.toFixed(1)+'" rx="2" fill="'+(i===n-1?'#e6b93a':'#1f8a57')+'"/>';
+    }).join('');
+    h+='<div class="lbl" style="margin-top:14px">Right on the first try, recent games</div><svg viewBox="0 0 300 70" class="histsvg" role="img" aria-label="Bar chart of first-try accuracy for your recent games">'+bars+'</svg>';
+    var all=R.hist||[];
+    if(all.length>=6){
+      var a3=all.slice(-3).reduce(function(x,y){return x+y;},0)/3,b3=all.slice(-6,-3).reduce(function(x,y){return x+y;},0)/3,d=Math.round(a3-b3);
+      h+='<p class="muted sm" style="margin:6px 0 0">'+(d>=5?'Your last 3 games are up '+d+' points from the 3 before. Nice climb!':'Steady is good. Every round is practice.')+'</p>';
+    }
+  }
+  h+='<p class="muted sm" style="margin:10px 0 0">Practiced '+wk+' of the last 7 days. One day off won’t break your streak.</p></div>';
+  return h;
 }
-
 /* ---------- board geometry ---------- */
 function pol(r,deg){var a=deg*Math.PI/180;return [r*Math.sin(a),-r*Math.cos(a)];}
 function wedge(r1,r2,a1,a2){
@@ -332,15 +400,15 @@ function boardSVG(darts){
   darts.forEach(function(d,i){
     var x=d.x,y=d.y,r=Math.hypot(x,y); if(r>190){x*=190/r;y*=190/r;}
     s+='<g class="dart" style="animation-delay:'+(i*0.5)+'s"><circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="8" fill="#ffd23f" stroke="#111" stroke-width="1.6"/>';
-    s+='<text x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="800" fill="#111" font-family="Barlow,Arial,sans-serif">'+(i+1)+'</text></g>';
+    s+='</g>';
   });
   return s+'</svg>';
 }
 
 /* ---------- players ---------- */
 function P(){return G.players[G.cur];}
-function O(){return G.players.length===2?G.players[1-G.cur]:null;}
-function oppBlocked(n){var o=O();return o?o.marks[n]>=3:G.bot.has(n);}
+function O(){return G.players.length===2?G.players[1-G.cur]:(G.botP||null);}
+function oppBlocked(n){var o=O();return o?o.marks[n]>=3:false;}
 function oppName(){var o=O();return o?o.name:'the opponent';}
 function closedAll(p){return CR.every(function(n){return p.marks[n]>=3;});}
 
@@ -414,11 +482,24 @@ function crMarks(h){
   if(h.kind==='seg'&&CR.indexOf(h.num)>=0)return [h.num,h.mult];
   return [0,0];
 }
-function genCricket(){
-  var p=P(),sig=SIG[S.diff];
-  var open=CR.filter(function(n){return p.marks[n]<3;});
-  var mine=CR.filter(function(n){return p.marks[n]>=3;});
-  var spare=CR.filter(function(n){return !oppBlocked(n);});
+var CRM={easy:{on:.85,T:.25,D:.10,bull:7},medium:{on:.75,T:.30,D:.22,bull:9},hard:{on:.60,T:.35,D:.25,bull:13}};
+function ringPoint(n,ring){
+  var a=SEG.indexOf(n)*18+(Math.random()*12-6);
+  var r=ring==='T'?103+(Math.random()*6-3):ring==='D'?166+(Math.random()*5-2.5):(Math.random()<.5?40+Math.random()*50:112+Math.random()*45);
+  return pol(r,a);
+}
+function crPoint(n){
+  var m=CRM[S.diff];
+  if(n===25)return [gauss()*m.bull,gauss()*m.bull];
+  if(Math.random()<m.on){var q=Math.random();return ringPoint(n,q<m.T?'T':q<m.T+m.D?'D':'S');}
+  if(Math.random()<.3)return pol(175+Math.random()*10,Math.random()*360);
+  var nb=SEG[(SEG.indexOf(n)+(Math.random()<.5?19:1))%20],r2=Math.random();
+  return ringPoint(nb,r2<.2?'T':r2<.35?'D':'S');
+}
+function crThrow(me,blockedFn){
+  var open=CR.filter(function(n){return me.marks[n]<3;});
+  var mine=CR.filter(function(n){return me.marks[n]>=3&&!blockedFn(n);});
+  var spare=CR.filter(function(n){return !blockedFn(n);});
   var darts=[],exp={};CR.forEach(function(n){exp[n]=0;});
   for(var i=0;i<3;i++){
     var n,r=Math.random();
@@ -430,11 +511,15 @@ function genCricket(){
       var pool=spare.length?spare:CR;
       n=pool[Math.floor(Math.random()*pool.length)];
     }
-    var t=aimPoint('T',n);
-    var h=classify(t[0]+gauss()*sig,t[1]+gauss()*sig);
+    var t=crPoint(n);
+    var h=classify(t[0],t[1]);
     h.cm=crMarks(h);darts.push(h);
     if(h.cm[0])exp[h.cm[0]]+=h.cm[1];
   }
+  return {darts:darts,exp:exp};
+}
+function genCricket(){
+  var p=P(),th=crThrow(p,oppBlocked),darts=th.darts,exp=th.exp;
   var detail=CR.map(function(n){
     var before=p.marks[n],add=exp[n],sc=Math.max(0,before+add-3)-Math.max(0,before-3),blocked=oppBlocked(n);
     return {n:n,before:before,add:add,sc:sc,blocked:blocked,pts:blocked?0:sc*n};
@@ -442,7 +527,20 @@ function genCricket(){
   var points=detail.reduce(function(s,d){return s+d.pts;},0);
   return {darts:darts,exp:exp,detail:detail,points:points};
 }
-
+function botTurn(){
+  var b=G.botP,p=P();
+  var th=crThrow(b,function(n){return p.marks[n]>=3;});
+  var pts=0,closed=[];
+  CR.forEach(function(n){
+    var add=th.exp[n];if(!add)return;
+    var before=b.marks[n],sc=Math.max(0,before+add-3)-Math.max(0,before-3);
+    if(before<3&&before+add>=3)closed.push(n);
+    if(p.marks[n]<3)pts+=sc*n;
+    b.marks[n]+=add;
+  });
+  b.score+=pts;
+  return {hits:th.darts.map(function(d){return d.label;}).join(', '),pts:pts,closed:closed};
+}
 /* ---------- text helpers ---------- */
 function describe501(d){
   var base=d.kind==='miss'?'Miss = 0':d.kind==='bull'?'Bull = 50':d.kind==='outer'?'Outer bull = 25':d.mult===1?d.label+' = '+d.num:d.label+' = '+d.mult+' × '+d.num+' = '+d.value;
@@ -485,7 +583,8 @@ function homeHTML(){
     '<button class="gametile" id="g501"><span class="gt-n">501</span><span class="gt-d">Count down to zero. 301 and 101 too.</span></button>'+
     '<button class="gametile" id="gcr"><span class="gt-n">Cricket</span><span class="gt-d">Close 20 to 15 and the bull, then score.</span></button>'+
     '<button class="chalktile" id="gcl"><span class="ct-t">Classroom</span><span class="ct-d">Mental math tricks, step by step</span></button>'+
-    '<div class="btnrow"><button class="howbtn'+trophyReady()+'" id="gtro">Trophy Case<small>'+trophyProgress()+'</small></button><button class="howbtn" id="ghow">How to play</button></div>'+
+    '<button class="sktile" id="gsk"><span class="sk-t">Scorekeeper</span><span class="sk-d">Keep score at a real board. You do the math, we check it.</span></button>'+
+    '<div class="btnrow"><button class="howbtn'+trophyReady()+'" id="gtro">'+caseSVG()+'Trophy Case<small>'+trophyProgress()+'</small></button><button class="howbtn" id="ghow">How to play</button></div>'+
     '<p class="muted sm center">Random darts land on the board. You work out the score.</p>';
 }
 function optsHTML(){
@@ -508,7 +607,7 @@ function optsHTML(){
   if(is501){
     how='Each round, add up the darts that count, then subtract from your score. Get to exactly 0 to win. <b>Double in:</b> your score doesn\'t start until you hit a double (or the bull), so darts before that count for nothing. <b>Double out:</b> you must finish on a double, and going below 0 or being left on 1 is a bust. Any bust puts your score back to where it started the round.';
   }else{
-    how='Close 20, 19, 18, 17, 16, 15 and Bull with 3 marks each. Single = 1 mark, double = 2, triple = 3. Outer bull = 1 mark, bull = 2. Extra marks on a number you\'ve closed score its value (25 for Bull), unless your opponent has closed it too. '+(S.players===2?'Close all seven while level or ahead on points to win.':'Here the opponent closes a number every third round.');
+    how='Close 20, 19, 18, 17, 16, 15 and Bull with 3 marks each. Single = 1 mark, double = 2, triple = 3. Outer bull = 1 mark, bull = 2. Extra marks on a number you\'ve closed score its value (25 for Bull), unless your opponent has closed it too. '+(S.players===2?'Close all seven while level or ahead on points to win.':'Here you play a computer opponent who throws too.');
   }
   if(S.players===2)how+=' <b>Two players:</b> pass the phone each turn. Everyone works out their own throws. Bullseyes and streaks are earned in 1 player games.';
   h+='<details class="card sm"><summary>How '+(is501?'501':'Cricket')+' works</summary><p>'+how+'</p></details>';
@@ -520,6 +619,7 @@ function bindHome(){
   $('#ghow').onclick=function(){S.view='how';render();window.scrollTo(0,0);};
   $('#gtro').onclick=function(){S.view='trophies';TS.newPiece=-1;TS.justDone=null;render();window.scrollTo(0,0);};
   $('#gcl').onclick=function(){S.view='class';render();window.scrollTo(0,0);};
+  $('#gsk').onclick=function(){S.view='sk';render();window.scrollTo(0,0);};
 }
 function bindOpts(){
   function wire(id,fn){
@@ -533,7 +633,7 @@ function bindOpts(){
   wire('segDiff',function(v){S.diff=v;});
   [0,1].forEach(function(i){var el=$('#n'+i);if(el)el.oninput=function(){S.names[i]=el.value;saveS();};});
   $('#back').onclick=function(){S.view='home';render();window.scrollTo(0,0);};
-  $('#go').onclick=newGame;
+  $('#go').onclick=function(){S.sk=false;newGame();};
 }
 
 /* ---------- how to play ---------- */
@@ -557,7 +657,7 @@ function howCR(){
   '<h3>Marks</h3><ul><li>A single is 1 mark, a double is 2, and a triple is 3.</li><li>The outer bull is 1 mark, and the bull is 2.</li><li>Any other number, like 12 or 7, earns nothing.</li></ul>'+
   '<h3>Scoring points</h3><p>Once you have closed a number, each extra mark on it scores that number’s value (25 for the bull), but only if your opponent has not closed it yet.</p><p>Example: you have closed 20 and hit a T20. That is 3 extra marks × 20 = 60 points.</p>'+
   '<h3>Each round</h3><ol><li>Three darts land on the board.</li><li>Tally your new marks. Each counter starts at what you already have, so tap + for every new mark.</li><li>Work out the points that round scored.</li></ol>'+
-  '<h3>Winning</h3><p>On your own, close all seven numbers. With two players, close all seven while level or ahead on points. In a one-player game, the practice opponent closes a number every third round, starting with the low ones.</p></div>';
+  '<h3>Winning</h3><p>On your own, close all seven numbers. With two players, close all seven while level or ahead on points. In a one-player game you play a computer opponent who throws too, and you can see what they hit.</p></div>';
 }
 function howHTML(){
   var tab=S.howTab||'501';
@@ -660,6 +760,7 @@ function trophySVG(t,rev,np){
   }
   return s+'</svg>';
 }
+function caseSVG(){return '<svg class="casesvg" viewBox="0 0 72 52" width="72" height="52" aria-hidden="true"><rect x="2" y="2" width="68" height="48" rx="5" fill="#8b6b45" stroke="#4e3724" stroke-width="2"/><rect x="7" y="7" width="58" height="38" rx="3" fill="#1f6a45"/><rect x="7" y="35" width="58" height="3" fill="#b58d5c"/><path d="M15 21H27C27 28 24 31 21 31C18 31 15 28 15 21Z" fill="#b9763a"/><rect x="19.5" y="31" width="3" height="3" fill="#7e4a20"/><rect x="16.5" y="33.5" width="9" height="2" rx=".8" fill="#7e4a20"/><path d="M28 12H44C44 23 40 28 36 28C32 28 28 23 28 12Z" fill="#e6b93a"/><path d="M28 15C22 15 22 23 29 23M44 15C50 15 50 23 43 23" fill="none" stroke="#a8790f" stroke-width="2"/><rect x="34.3" y="28" width="3.4" height="4.5" fill="#a8790f"/><rect x="30" y="32.2" width="12" height="2.8" rx="1" fill="#a8790f"/><path d="M45 21H57C57 28 54 31 51 31C48 31 45 28 45 21Z" fill="#c4ccd2"/><rect x="49.5" y="31" width="3" height="3" fill="#7f8b94"/><rect x="46.5" y="33.5" width="9" height="2" rx=".8" fill="#7f8b94"/><path d="M7 7H32L7 32Z" fill="#fff" opacity=".16"/></svg>';}
 function trophyReady(){var c=TROPHIES[R.tIdx];return c&&R.bulls>=c.cost?' ready':'';}
 function trophyProgress(){
   var c=TROPHIES[R.tIdx];
@@ -668,7 +769,6 @@ function trophyProgress(){
 }
 function trophiesHTML(){
   var h='<div class="top"><button class="ghost" id="back">\u2039 Back</button><div class="ttl">Trophy Case</div><div class="bank">'+bullSVG(18)+' '+R.bulls+'</div></div>';
-  h+=progressHTML();
   if(TS.justDone){
     var jd=TROPHIES.filter(function(t){return t.id===TS.justDone;})[0];
     h+='<div class="card center"><div class="done-title">Trophy complete!</div><div class="tbig glow">'+trophySVG(jd,'all')+'</div><p><b>'+esc(jd.name)+'</b> is on your shelf now.</p></div>';
@@ -691,6 +791,7 @@ function trophiesHTML(){
     return t?'<div class="tcase">'+trophySVG(t,'all')+esc(t.name)+'</div>':'';
   }).join('')+'</div>';
   h+='</div>';
+  h+=progressHTML();
   h+=starsHTML();
   var next=TROPHIES.slice(R.tIdx+1);
   if(next.length){
@@ -720,7 +821,7 @@ function bindTrophies(){
 var LESSONS=[
   {id:'l1',title:'Doubles and triples',sub:'Read D14 and T17 in your head'},
   {id:'l2',title:'Adding three scores',sub:'Add three dart scores in your head'},
-  {id:'l3',title:'Subtracting from your score',sub:'Coming soon',soon:true}
+  {id:'l3',title:'Subtracting from your score',sub:'Take a total off your score in your head'}
 ];
 var C={li:0,step:0,alt:false,qs:[],qi:0,attempts:0,hints:0,fb:'',fbc:'',done:false,val:''};
 var WGRID='<div class="wgrid">'+[1,2,3,4,5,6,7,8,9,10].map(function(n){return '<span>'+n+' <i class="op">×2 →</i> '+(2*n)+'</span>';}).join('')+'</div>';
@@ -794,11 +895,51 @@ function mixed2(){
 }
 LESSONS[0].steps=L1;LESSONS[0].done='You worked through doubles and triples.';
 LESSONS[1].steps=L2;LESSONS[1].done='You worked through adding three scores.';
+var L3=[
+  {board:[['ch-title','Subtracting from your score'],['cw','Goal: take a round total off your score in your head. Big pieces first.'],['cd','No timer. Slow and sure beats fast and guessing.']]},
+  {board:[['ch-title','Warm-up'],['cw','Landing on a hundred.'],['cw','500 − 60 = 440'],['cw','400 − 70 = 330'],['cw','300 − 80 = 220'],['cw','200 − 90 = 110'],['cd','Say them out loud once or twice. These landing spots make everything else easier.']]},
+  {board:[['ch-title','Your way'],['cw','Big pieces first: hundreds, then tens, then ones.'],['cy','501 − 137'],['cw','take the 100: 501 − 100 = 401'],['cw','take the 30: 401 − 30 = 371'],['cw','take the 7: 371 − 7 = 364'],['cw','Tricky one: 401 − 30'],['cw','401 is 400 and 1'],['cw','400 − 30 = 370, plus 1 = 371'],['cd','Say the running number out loud each time: 401, 371, 364.']]},
+  {board:[['ch-title','Same gap'],['cw','Take 1 off both numbers. The gap between them stays the same.'],['cy','501 − 137'],['cw','501 − 1 = 500'],['cw','137 − 1 = 136'],['cw','500 − 100 = 400'],['cw','400 − 36 = 364'],['cd','Careful: if you move the 1 to the other number (500 − 138) you end up 2 short.']],
+   alt:[['ch-title','Round and fix'],['cy','501 − 137'],['cw','round 137 up to 140'],['cw','501 − 140 = 361'],['cw','you took 3 too many, so give 3 back'],['cw','361 + 3 = 364'],['cd','Round to whichever number is easiest.']]},
+  {board:[['ch-title','Dart by dart'],['cw','Take each dart off as it lands. Smaller numbers, smaller steps.'],['cy','T19, T20, S20'],['cw','501 − 57 = 444'],['cw','444 − 60 = 384'],['cw','384 − 20 = 364'],['cd','To take off 60: take 100, then give 40 back.']],
+   alt:[['ch-title','Count up to check'],['cy','137 up to 501'],['cw','137 + 3 = 140'],['cw','140 + 60 = 200'],['cw','200 + 300 = 500'],['cw','500 + 1 = 501'],['cw','3 + 60 + 300 + 1 = 364'],['cd','Count up and get the same answer? Then you got it right.']]},
+  {board:[['ch-title','Say it out loud'],['cw','Talk it through, one piece at a time:'],['cy','“501 minus 137. Take a hundred: 401. Take thirty: 371. Take seven: 364.”'],['cd','At the board, nobody is waiting for you to write it down. So practice saying it out loud and doing it in your head!']]}
+];
+function subPieces(b){var h=Math.floor(b/100)*100,t=Math.floor((b%100)/10)*10,o=b%10,out=[];if(h)out.push(h);if(t)out.push(t);if(o)out.push(o);return out;}
+function subExplain(a,b){
+  var run=a,out=[];
+  subPieces(b).forEach(function(pc){out.push('Take the '+pc+': '+run+' − '+pc+' = '+(run-pc)+'.');run-=pc;});
+  return out.join(' ');
+}
+function mkSub(a,b,hints,explain){
+  var big=a+' − '+b;
+  return {big:big,small:true,label:big,resText:big,ans:a-b,hints:hints,explain:explain||subExplain(a,b)};
+}
+function subHints(a,b){
+  var r=Math.round(b/10)*10,fix=b-r,h=['Take the big pieces first: '+subPieces(b).join(', then ')+'.'];
+  if(fix!==0)h.push('Or round '+b+' to '+r+': '+a+' − '+r+' = '+(a-r)+', then '+(fix>0?'take '+fix+' more':'give '+(-fix)+' back')+'.');
+  return h;
+}
+function guided3(){return [
+  mkSub(501,60,['Take 100, then give 40 back.'],'501 − 100 = 401, then give 40 back: 441.'),
+  mkSub(501,95,['Take the 90 first, then the 5.']),
+  mkSub(341,83,['Take the 80, then the 3.']),
+  mkSub(264,137,[])
+];}
+function mixed3(){
+  var out=[];
+  for(var i=0;i<6;i++){
+    var b=20+Math.floor(Math.random()*161),a=Math.max(b+20,120+Math.floor(Math.random()*382));
+    out.push(mkSub(a,b,subHints(a,b)));
+  }
+  return out;
+}
 function startPractice(){
   if(C.li===0)return startPracticeL1();
   C.qi=0;C.attempts=0;C.hints=0;C.fb='';C.fbc='';C.done=false;C.val='';
-  C.qs=C.step===6?guided2():mixed2();
+  C.qs=C.li===1?(C.step===6?guided2():mixed2()):(C.step===6?guided3():mixed3());
 }
+LESSONS[2].steps=L3;LESSONS[2].done='You worked through subtracting from your score.';
 
 function ch(lines,still){
   return '<div class="chalkboard'+(still?' still':'')+(S.big?' xl':'')+'">'+lines.map(function(l,i){return '<div class="cl '+l[0]+'" style="animation-delay:'+(i*0.3).toFixed(2)+'s">'+l[1]+'</div>';}).join('')+'</div>';
@@ -918,24 +1059,128 @@ function bindLesson(){
   };
 }
 
+/* ---------- scorekeeper ---------- */
+function mkDart(n,mult){
+  if(n===0)return {kind:'miss',num:0,mult:0,value:0,label:'Miss',dbl:false};
+  if(n===50)return {kind:'bull',num:25,mult:2,value:50,label:'Bull',dbl:true};
+  if(n===25)return {kind:'outer',num:25,mult:1,value:25,label:'Outer bull',dbl:false};
+  return {kind:'seg',num:n,mult:mult,value:n*mult,label:(mult===3?'T':mult===2?'D':'S')+n,dbl:mult===2};
+}
+function turn501From(p,darts){
+  var running=p.rem,isIn=p.isIn,bust=false,won=false,counted=0,dOut=G.rules.dOut,used=[];
+  for(var i=0;i<darts.length;i++){
+    var h=darts[i];used.push(h);
+    if(!isIn){
+      if(h.dbl){isIn=true;h.inDart=true;}
+      else{h.counts=false;continue;}
+    }
+    h.counts=true;counted+=h.value;
+    var nr=running-h.value;
+    if(nr<0||(dOut&&(nr===1||(nr===0&&!h.dbl)))){bust=true;break;}
+    running=nr;
+    if(nr===0){won=true;break;}
+  }
+  return {darts:used,total:counted,bust:bust,won:won,startRem:p.rem,startIn:p.isIn,newScore:bust?p.rem:p.rem-counted,newIn:bust?p.isIn:isIn};
+}
+function crTurnFrom(darts){
+  var p=P(),exp={};CR.forEach(function(n){exp[n]=0;});
+  darts.forEach(function(d){d.cm=crMarks(d);if(d.cm[0])exp[d.cm[0]]+=d.cm[1];});
+  var detail=CR.map(function(n){
+    var before=p.marks[n],add=exp[n],sc=Math.max(0,before+add-3)-Math.max(0,before-3),blocked=oppBlocked(n);
+    return {n:n,before:before,add:add,sc:sc,blocked:blocked,pts:blocked?0:sc*n};
+  });
+  var points=detail.reduce(function(a,d){return a+d.pts;},0);
+  return {darts:darts,exp:exp,detail:detail,points:points};
+}
+function skChips(){
+  var d=G.turn?G.turn.darts:G.entered;
+  return d.map(function(x){var cls=x.kind==='seg'?({1:'s',2:'d',3:'t'})[x.mult]:x.kind;return '<div class="chip c-'+cls+'">'+esc(x.label)+'</div>';}).join('');
+}
+function updChips(){var c=$('#chips');if(c)c.innerHTML=skChips();}
+function entryHTML(){
+  var n=G.entered.length,full=n>=3,nums=[];
+  for(var i=1;i<=20;i++)nums.push('<button data-n="'+i+'"'+(full?' disabled':'')+'>'+i+'</button>');
+  var h='<p class="q">'+(G.players.length===2?esc(P().name)+': ':'')+(full?'That’s three darts. Tap Done.':'Enter what you threw. Dart '+(n+1)+' of 3.')+'</p>';
+  h+=segBtns('segMult',[['S','Single'],['D','Double'],['T','Triple']],G.mult);
+  h+='<div class="numgrid">'+nums.join('')+'</div>';
+  h+='<div class="numrow"><button data-n="25"'+(full?' disabled':'')+'>Outer bull</button><button data-n="50"'+(full?' disabled':'')+'>Bull</button><button data-n="0"'+(full?' disabled':'')+'>Miss</button></div>';
+  h+='<div class="row2"><button class="ghost" id="undo"'+(n?'':' disabled')+'>Undo last dart</button></div>';
+  h+='<button class="primary wide" id="skdone"'+(n?'':' disabled')+'>Done: '+n+' dart'+(n===1?'':'s')+'</button>';
+  return h;
+}
+function addDart(n){
+  if(G.entered.length>=3)return;
+  G.entered.push(mkDart(n,G.mult==='T'?3:G.mult==='D'?2:1));
+  updChips();renderPanel();
+}
+function skDone(){
+  var p=P(),darts=G.entered.slice();
+  if(!darts.length)return;
+  if(S.mode==='501'){G.turn=turn501From(p,darts);G.step='total';}
+  else{G.turn=crTurnFrom(darts);G.step='marks';G.add={};CR.forEach(function(n){G.add[n]=0;});}
+  if(G.skAuto){if(S.mode==='501')finish501();else finishCR();}
+  render();
+}
+function bindEntry(p){
+  var seg=document.querySelectorAll('#segMult button');
+  for(var i=0;i<seg.length;i++){(function(b){b.onclick=function(){G.mult=b.dataset.v;renderPanel();};})(seg[i]);}
+  var nb=p.querySelectorAll('.numgrid button,.numrow button');
+  for(var j=0;j<nb.length;j++){(function(b){b.onclick=function(){addDart(+b.dataset.n);};})(nb[j]);}
+  var u=p.querySelector('#undo');if(u)u.onclick=function(){G.entered.pop();updChips();renderPanel();};
+  var d=p.querySelector('#skdone');if(d)d.onclick=skDone;
+}
+function skHTML(){
+  var is501=S.mode==='501';
+  var h='<div class="top"><button class="ghost" id="back">\u2039 Back</button><div class="ttl">Scorekeeper</div><div style="width:64px"></div></div>';
+  h+='<div class="card"><p class="muted sm" style="margin-top:0">Use this at a real board. Enter each dart you threw, then work out the score yourself. We’ll check your math.</p>';
+  h+='<div class="lbl">Game</div>'+segBtns('segMode',[['501','501'],['cricket','Cricket']],S.mode);
+  h+='<div class="lbl">Players</div>'+segBtns('segPlayers',[[1,'1 player'],[2,'2 players']],S.players);
+  if(S.players===2)h+='<div class="lbl">Names</div><div class="names"><input id="n0" maxlength="14" autocomplete="off" autocorrect="off" spellcheck="false" aria-label="Player 1 name" value="'+esc(S.names[0])+'"><input id="n1" maxlength="14" autocomplete="off" autocorrect="off" spellcheck="false" aria-label="Player 2 name" value="'+esc(S.names[1])+'"></div>';
+  if(is501){
+    h+='<div class="lbl">Starting score</div>'+segBtns('segStart',[[501,'501'],[301,'301'],[101,'101 (quick)']],S.start);
+    h+='<div class="lbl">Getting started</div>'+segBtns('segIn',[[0,'Straight in'],[1,'Double in']],S.dIn?1:0);
+    h+='<div class="lbl">Finishing</div>'+segBtns('segOut',[[0,'Straight out'],[1,'Double out']],S.dOut?1:0);
+  }
+  h+='<div class="lbl">Math help</div>'+segBtns('segAuto',[[0,'Check my math'],[1,'Just keep score']],S.skAuto?1:0);
+  h+='<p class="muted sm" style="margin:8px 0 0">'+(S.skAuto?'We’ll do the math and keep the score for you.':'You work out each round, and we’ll tell you if you’re right.')+' Bullseyes and streaks are for the practice games.</p>';
+  h+='<button class="primary wide" id="go">Start scoring</button></div>';
+  return h;
+}
+function bindSk(){
+  function wire(id,fn){
+    var el=document.querySelectorAll('#'+id+' button');
+    for(var i=0;i<el.length;i++){(function(b){b.onclick=function(){fn(b.dataset.v);saveS();render();};})(el[i]);}
+  }
+  wire('segMode',function(v){S.mode=v;});
+  wire('segPlayers',function(v){S.players=+v;});
+  wire('segStart',function(v){S.start=+v;});
+  wire('segIn',function(v){S.dIn=+v===1;});
+  wire('segOut',function(v){S.dOut=+v===1;});
+  wire('segAuto',function(v){S.skAuto=+v===1;});
+  [0,1].forEach(function(i){var el=$('#n'+i);if(el)el.oninput=function(){S.names[i]=el.value;saveS();};});
+  $('#back').onclick=function(){S.view='home';render();window.scrollTo(0,0);};
+  $('#go').onclick=function(){S.sk=true;newGame();};
+}
+
 /* ---------- game flow ---------- */
 function newGame(){
   var np=S.players;
   G={round:0,cur:0,players:[],attempts:0,hint:false,hintUsed:false,fb:'',fbc:'',lastVal:'',wrong:[],note:'',oppMsg:'',
-     over:false,winner:-1,rules:{dIn:S.dIn,dOut:S.dOut},rewards:np===1,turnEarn:0,gameEarn:0,msgs:[]};
+     over:false,winner:-1,rules:{dIn:S.dIn,dOut:S.dOut},rewards:np===1&&!S.sk,sk:!!S.sk,skAuto:!!S.skAuto,turnEarn:0,gameEarn:0,msgs:[]};
   for(var i=0;i<np;i++){
     var marks={};CR.forEach(function(n){marks[n]=0;});
     var nmv=np===2?((S.names[i]||'').trim()||'Player '+(i+1)):'You';
     G.players.push({name:nmv,rem:S.start,isIn:!S.dIn,marks:marks,score:0,q:0,ft:0,streak:0,best:0});
   }
-  if(S.mode==='cricket'&&np===1)G.bot=new Set();
+  if(S.mode==='cricket'&&np===1&&!S.sk){var bm={};CR.forEach(function(n){bm[n]=0;});G.botP={name:'Opponent',marks:bm,score:0};}
   startTurn(true);
 }
 function startTurn(first){
   if(first){G.cur=0;G.round=1;}
   else{G.cur=(G.cur+1)%G.players.length;if(G.cur===0)G.round++;}
-  G.attempts=0;G.hint=false;G.hintUsed=false;G.fb='';G.fbc='';G.lastVal='';G.wrong=[];G.note='';G.oppMsg='';G.turnEarn=0;G.msgs=[];
-  if(S.mode==='501'){G.turn=gen501(P());G.step='total';}
+  G.attempts=0;G.hint=false;G.hintUsed=false;G.fb='';G.fbc='';G.lastVal='';G.wrong=[];G.note='';G.oppMsg='';G.turnEarn=0;G.praise=null;G.msgs=[];
+  if(G.sk){G.turn=null;G.step='enter';G.entered=[];G.mult=G.mult||'S';}
+  else if(S.mode==='501'){G.turn=gen501(P());G.step='total';}
   else{G.turn=genCricket();G.step='marks';G.add={};CR.forEach(function(n){G.add[n]=0;});}
   render();
   window.scrollTo(0,0);
@@ -943,30 +1188,32 @@ function startTurn(first){
 function toMenu(){G=null;S.view='home';render();window.scrollTo(0,0);}
 function render(){
   var app=$('#app');
-  if(!G){if(S.view==='opts'){app.innerHTML=optsHTML();bindOpts();}else if(S.view==='how'){app.innerHTML=howHTML();bindHow();}else if(S.view==='trophies'){app.innerHTML=trophiesHTML();bindTrophies();}else if(S.view==='class'){app.innerHTML=classHTML();bindClass();}else if(S.view==='lesson'){app.innerHTML=lessonHTML();bindLesson();}else{app.innerHTML=homeHTML();bindHome();}return;}
+  if(!G){if(S.view==='opts'){app.innerHTML=optsHTML();bindOpts();}else if(S.view==='how'){app.innerHTML=howHTML();bindHow();}else if(S.view==='trophies'){app.innerHTML=trophiesHTML();bindTrophies();}else if(S.view==='class'){app.innerHTML=classHTML();bindClass();}else if(S.view==='lesson'){app.innerHTML=lessonHTML();bindLesson();}else if(S.view==='sk'){app.innerHTML=skHTML();bindSk();}else{app.innerHTML=homeHTML();bindHome();}return;}
   var np=G.players.length;
-  app.innerHTML='<div class="top"><button class="ghost" id="menu">Menu</button><div class="ttl">'+(S.mode==='501'?S.start:'Cricket')+'</div><div class="bank" id="bank"></div></div>'+
+  app.innerHTML='<div class="top"><button class="ghost" id="menu">Menu</button><div class="ttl">'+(G.sk?'Scorekeeper':(S.mode==='501'?S.start:'Cricket'))+'</div><div class="bank" id="bank"></div></div>'+
     '<div class="rules">'+rulesLine()+'</div>'+
-    '<div class="hud'+(np===2?' two':'')+'" id="hud"></div>'+
+    '<div class="hud'+(np===2||G.botP?' two':'')+'" id="hud"></div>'+
     (np===2?'<div class="turn">'+esc(P().name)+'\'s turn</div>':'')+
-    '<div class="boardbox">'+boardSVG(G.turn.darts)+'</div>'+
-    '<div class="legend"><span>S = single</span><span>D = double (×2)</span><span>T = triple (×3)</span></div>'+
-    '<div class="chips">'+chipsHTML(G.turn.darts)+'</div>'+
+    (G.sk?'':'<div class="boardbox">'+boardSVG(G.turn.darts)+'</div>'+
+    '<div class="legend"><span>S = single</span><span>D = double (×2)</span><span>T = triple (×3)</span></div>')+
+    '<div class="chips" id="chips">'+(G.sk?skChips():chipsHTML(G.turn.darts))+'</div>'+
     '<div class="card" id="panel"></div>';
   $('#menu').onclick=toMenu;
   renderPanel();
 }
 function hud(){
-  var np=G.players.length,is501=S.mode==='501';
-  var h=G.players.map(function(p,i){
+  var np=G.players.length,is501=S.mode==='501',two=np===2||!!G.botP;
+  var list=G.players.slice();if(G.botP)list.push(G.botP);
+  var h=list.map(function(p,i){
+    var isBot=p===G.botP;
     var acc=p.q?Math.round(100*p.ft/p.q)+'%':'–';
     var big=is501?p.rem:p.score,lab=is501?'remaining':'points';
     var tag=(is501&&G.rules.dIn&&!p.isIn)?'<div class="tag">needs a double</div>':'';
-    var name=np===2?'<div class="pn">'+esc(p.name)+'</div>':'';
-    var sub='<div class="muted sm">'+lab+(np===2?', '+acc+' first try':'')+'</div>';
-    return '<div class="pl'+(np===2&&i===G.cur?' on':'')+'">'+name+'<div class="big">'+big+'</div>'+sub+tag+'</div>';
+    var name=two?'<div class="pn">'+esc(p.name)+'</div>':'';
+    var sub='<div class="muted sm">'+lab+(two&&!isBot?', '+acc+' first try':'')+'</div>';
+    return '<div class="pl'+(two&&!isBot&&i===G.cur?' on':'')+'">'+name+'<div class="big">'+big+'</div>'+sub+tag+'</div>';
   }).join('');
-  if(np===1){
+  if(!two){
     var p=G.players[0],acc1=p.q?Math.round(100*p.ft/p.q)+'%':'–';
     h+='<div class="mini"><div><b>'+G.round+'</b><span>round</span></div><div><b>'+acc1+'</b><span>first try</span></div><div><b>'+p.streak+'</b><span>streak</span></div></div>';
   }
@@ -1067,7 +1314,7 @@ function blkStrip(){
 function tilesHTML(locked){
   var p=P(),o=O();
   return '<div class="tiles">'+CR.map(function(n){
-    var bad=G.wrong.indexOf(n)>=0,opp,blk=o?o.marks[n]>=3:G.bot.has(n),strong=blk&&S.diff!=='hard';
+    var bad=G.wrong.indexOf(n)>=0,opp,blk=o?o.marks[n]>=3:false,strong=blk&&S.diff!=='hard';
     if(o){var m=o.marks[n];opp='<div class="topp'+(m>=3?' cl':'')+'">'+(strong?'no pts':'opp '+GL[Math.min(3,m)])+'</div>';}
     else opp='<div class="topp cl">'+(blk?(strong?'no pts':'opp ⊗'):'')+'</div>';
     return '<div class="tile'+(bad?' bad':'')+(strong?' blk':'')+'"><div class="tnum">'+nm(n)+'</div><div class="tg">'+GL[Math.min(3,p.marks[n]+G.add[n])]+'</div><div class="thad">had '+p.marks[n]+'</div>'+opp+
@@ -1080,7 +1327,7 @@ function panelCR(){
   var t=G.turn,p=P(),h='';
   if(G.step==='marks'){
     h+='<p class="q">Add your new marks. Each counter starts at what you already have, so tap + for every mark these three darts earned.</p>'+tilesHTML(false)+blkStrip();
-    h+='<p class="muted sm">⊗ means closed (3 marks or more). Below each symbol is your opponent\'s; red means they\'ve closed it, so no points there.</p>';
+    h+='<p class="muted sm">⊗ means closed (3 marks or more). “had” is what you started the round with. Below each symbol is your opponent’s; red means they’ve closed it, so no points there.</p>';
     h+='<button class="primary wide" id="chk">Check marks</button>'+fbH()+helpH(t.darts.map(describeCR).map(esc).join('<br>'));
   }else if(G.step==='points'){
     h+=tilesHTML(true)+blkStrip()+'<p class="q">How many points did this round score?</p>';
@@ -1090,7 +1337,10 @@ function panelCR(){
       if(d.blocked)return nm(d.n)+': '+oppName()+' closed it, so no points.';
       return nm(d.n)+': '+d.sc+' scoring mark'+(d.sc>1?'s':'')+' × '+d.n+' = ?';
     });
-    h+=inputRow()+fbH()+helpH(hl.length?hl.map(esc).join('<br>'):'No marks were added, so nothing to score.');
+    h+=inputRow()+'<button class="ghost altbtn" id="zero">Nothing scored (0)</button>'+fbH()+helpH(hl.length?hl.map(esc).join('<br>'):'No marks were added, so nothing to score.');
+  }else if(G.step==='now'){
+    h+=tilesHTML(true)+'<p class="q">You had <b>'+p.score+'</b> points and scored <b>'+t.points+'</b>. How many points do you have now?</p>';
+    h+=inputRow()+fbH()+helpH(p.score+' + '+t.points+' = ?');
   }else{
     var lines=t.detail.filter(function(d){return d.add>0;}).map(function(d){
       if(d.sc>0&&d.blocked)return '<li>'+nm(d.n)+': '+esc(oppName())+' closed it, no points</li>';
@@ -1099,12 +1349,16 @@ function panelCR(){
     }).join('');
     h+='<div class="res">Round score: <b>'+t.points+'</b></div>';
     if(lines)h+='<ul class="lines">'+lines+'</ul>';
-    if(G.oppMsg)h+='<p class="muted sm">'+G.oppMsg+'</p>';
+    if(G.oppMsg)h+='<p class="oppline">'+esc(G.oppMsg)+'</p>';
     if(G.over){
-      if(G.players.length===1)h+='<div class="res win">All seven numbers closed!</div>';
+      if(G.botP){
+        if(G.winner===0)h+='<div class="res win">You win!</div>';
+        else if(G.winner===-3)h+='<div class="res">Good game! The opponent finished first.</div>';
+        else h+='<div class="res">It’s a tie!</div>';
+      }else if(G.players.length===1)h+='<div class="res win">All seven numbers closed!</div>';
       else if(G.winner>=0)h+='<div class="res win">'+esc(G.players[G.winner].name)+' wins!</div>';
-      else h+='<div class="res">It\'s a tie!</div>';
-      h+=summaryHTML()+gameEarnHTML()+overButtons();
+      else h+='<div class="res">It’s a tie!</div>';
+      h+=summaryHTML()+(G.botP?'<p class="muted">Opponent: '+G.botP.score+' points.</p>':'')+gameEarnHTML()+overButtons();
     }else h+=nextBtn();
   }
   return h;
@@ -1119,30 +1373,41 @@ function checkCR(){
     var inp=$('#ans'),v=parseInt(inp.value,10);
     if(isNaN(v)){G.fb='Type a number first.';G.fbc='no';return;}
     G.lastVal=inp.value;
-    if(v===t.points){resolve(true);finishCR();}
-    else wrongAns(v,t.points);
+    if(G.step==='points'){
+      if(v===t.points){resolve(true);if(t.points>0)G.step='now';else finishCR();}
+      else wrongAns(v,t.points);
+    }else{
+      var want=P().score+t.points;
+      if(v===want){resolve(true);finishCR();}
+      else wrongAns(v,want);
+    }
   }
 }
 function finishCR(){
   var t=G.turn,p=P(),o=O();
   CR.forEach(function(n){p.marks[n]+=t.exp[n];});
   p.score+=t.points;G.oppMsg='';
-  if(!o){
-    if(G.round%3===0){
-      var c=[15,16,17,18,19,20,25].filter(function(n){return !G.bot.has(n);});
-      if(c.length){var n=c[0];G.bot.add(n);G.oppMsg='The opponent just closed '+nm(n)+'.';}
+  if(G.botP){
+    var b=G.botP;
+    if(closedAll(p)&&(closedAll(b)||p.score>=b.score)){
+      G.over=true;G.winner=closedAll(b)?(p.score>b.score?0:b.score>p.score?-3:-1):0;
+    }else{
+      var r=botTurn();
+      G.oppMsg='Opponent threw '+r.hits+'.'+(r.pts?' Scored '+r.pts+'.':'')+(r.closed.length?' Closed '+r.closed.map(nm).join(', ')+'.':'');
+      if(closedAll(b)&&(closedAll(p)||b.score>=p.score)){
+        G.over=true;G.winner=closedAll(p)?(p.score>b.score?0:b.score>p.score?-3:-1):-3;
+      }
     }
-    G.over=closedAll(p);if(G.over&&G.rewards)rewardGame();
-  }else{
+    if(G.over&&G.rewards)rewardGame();
+  }else if(o){
     if(closedAll(p)&&closedAll(o)){
       G.over=true;G.winner=p.score>o.score?G.cur:o.score>p.score?1-G.cur:-1;
     }else if(closedAll(p)&&p.score>=o.score){
       G.over=true;G.winner=G.cur;
     }
-  }
+  }else{G.over=closedAll(p);}
   G.step='done';
 }
-
 /* ---------- shared panel wiring ---------- */
 function reveal(){
   var t=G.turn;
@@ -1151,6 +1416,7 @@ function reveal(){
     else{resolve(false);finish501();}
   }else{
     if(G.step==='marks'){CR.forEach(function(n){G.add[n]=t.exp[n];});resolve(false);G.step='points';}
+    else if(G.step==='points'){resolve(false);if(t.points>0)G.step='now';else finishCR();}
     else{resolve(false);finishCR();}
   }
   renderPanel();
@@ -1162,6 +1428,7 @@ function onCheck(){
 function renderPanel(){
   hud();
   var p=$('#panel');
+  if(G.sk&&G.step==='enter'){p.innerHTML=entryHTML();bindEntry(p);return;}
   p.innerHTML=earnHTML()+(S.mode==='501'?panel501():panelCR());
   var q=function(s){return p.querySelector(s);};
   var chk=q('#chk');if(chk)chk.onclick=onCheck;
@@ -1169,6 +1436,7 @@ function renderPanel(){
   if(ans){ans.onkeydown=function(e){if(e.key==='Enter')onCheck();};try{ans.focus({preventScroll:true});ans.select();}catch(e){}}
   var hb=q('#hintbtn');if(hb)hb.onclick=function(){G.hint=!G.hint;if(G.hint)G.hintUsed=true;renderPanel();};
   var rv=q('#reveal');if(rv)rv.onclick=reveal;
+  var zr=q('#zero');if(zr)zr.onclick=function(){var a=q('#ans');if(a)a.value='0';onCheck();};
   var nx=q('#next');if(nx)nx.onclick=function(){startTurn(false);};
   var ag=q('#again');if(ag)ag.onclick=newGame;
   var mn=q('#menu2');if(mn)mn.onclick=toMenu;
