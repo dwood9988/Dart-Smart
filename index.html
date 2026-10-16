@@ -233,6 +233,10 @@ details.card p{margin:10px 0 0}
 .gal .mascot{display:block;margin:0 auto 4px}
 .gal small{display:block;font-weight:400;color:var(--ink2)}
 .gal .dim{opacity:.5}
+.keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0 6px}
+.keypad button{min-height:52px;border:2px solid var(--wood-lt);border-radius:10px;background:var(--paper2);color:var(--ink);font:700 28px var(--num);padding:0;touch-action:manipulation;-webkit-user-select:none;user-select:none}
+.keypad button:active{background:var(--burg);color:var(--cream)}
+.row input[readonly]{caret-color:transparent}
 @media (prefers-reduced-motion:reduce){.dart,.chip,.peel,.cl,.earnbig.pop,.okbadge.pop{animation:none}.peel{opacity:0}.cl{opacity:1}}
 </style>
 </head>
@@ -305,6 +309,28 @@ function praiseBanner(){
   if(!G.praise)return '';
   var pop=G.praiseFresh;G.praiseFresh=false;
   return '<div class="praise'+(pop?' pop':'')+'">'+mascot(G.praise.kind)+'<div><b>'+esc(G.praise.title)+'</b><span>'+esc(G.praise.sub)+'</span></div></div>';
+}
+function keypadHTML(){
+  var keys=['1','2','3','4','5','6','7','8','9','C','0','⌫'];
+  return '<div class="keypad" role="group" aria-label="Number pad">'+keys.map(function(k){return '<button type="button" data-k="'+k+'" aria-label="'+(k==='⌫'?'Backspace':k==='C'?'Clear':k)+'">'+k+'</button>';}).join('')+'</div>';
+}
+function keyPress(k){
+  var a=document.querySelector('#ans');if(!a)return;
+  var v=a.value||'';
+  if(k==='⌫')v=v.slice(0,-1);else if(k==='C')v='';else if(v.length<4)v+=k;
+  a.value=v;
+}
+function bindKeypad(root,onEnter){
+  var kb=root.querySelectorAll('.keypad button');
+  for(var i=0;i<kb.length;i++){(function(b){b.onclick=function(){keyPress(b.dataset.k);};})(kb[i]);}
+  var a=root.querySelector('#ans');
+  if(a){
+    a.onkeydown=function(e){
+      if(/^[0-9]$/.test(e.key)){keyPress(e.key);e.preventDefault();}
+      else if(e.key==='Backspace'){keyPress('⌫');e.preventDefault();}
+      else if(e.key==='Enter'){e.preventDefault();onEnter();}
+    };
+  }
 }
 function okBadgeHTML(pop){return '<div class="okbadge'+(pop?' pop':'')+'"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#1f8a57"/><path d="M6.5 12.5l3.8 3.8 7.2-8" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><b>Correct!</b></div>';}
 function gameOk(){if(!G.ok||G.fb)return '';var f=G.okFresh;G.okFresh=false;return okBadgeHTML(f);}
@@ -1015,7 +1041,7 @@ function practiceHTML(){
   var h=ch([['cd','Question '+(C.qi+1)+' of '+C.qs.length],[q.small?'ch-big sm':'ch-big',q.big||q.label],['cd','Say it out loud, then type the answer.']],true);
   h+='<div class="card">';
   if(!C.done){
-    h+='<div class="row"><input id="ans" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="done" name="dart-answer" placeholder="?" aria-label="Your answer" value="'+esc(C.val)+'"><button class="primary" id="chk">Check</button></div>';
+    h+='<div class="row"><input id="ans" type="text" readonly inputmode="none" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="done" name="dart-answer" placeholder="?" aria-label="Your answer" value="'+esc(C.val)+'"><button class="primary" id="chk">Check</button></div>'+keypadHTML();
     if(C.fb)h+='<div class="fb '+C.fbc+'">'+C.fb+'</div>';
     h+='<div class="row2">';
     if(q.hints.length>C.hints)h+='<button class="ghost" id="hintbtn">'+(C.hints?'Another hint':'Need a hint?')+'</button>';
@@ -1067,8 +1093,7 @@ function bindLesson(){
   var ts=q('#tsize');if(ts)ts.onclick=function(){S.big=!S.big;saveS();render();};
   var dn=q('#done');if(dn)dn.onclick=function(){S.view='class';render();window.scrollTo(0,0);};
   var ck=q('#chk');if(ck)ck.onclick=function(){checkQ();render();};
-  var ans=q('#ans');
-  if(ans){ans.onkeydown=function(e){if(e.key==='Enter'){checkQ();render();}};try{ans.focus({preventScroll:true});ans.select();}catch(e){}}
+  bindKeypad(document,function(){checkQ();render();});
   var hb=q('#hintbtn');if(hb)hb.onclick=function(){C.hints++;render();};
   var rv=q('#reveal');if(rv)rv.onclick=function(){C.done=true;C.ok=false;C.fb='';C.val='';render();};
   var qn=q('#qnext');if(qn)qn.onclick=function(){
@@ -1251,7 +1276,7 @@ function wrongAns(v,exp){
   G.fb='Not quite. '+v+' is a bit '+(v>exp?'high':'low')+'. Try again.';
 }
 function inputRow(){
-  return '<div class="row"><input id="ans" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="done" name="dart-answer" placeholder="?" aria-label="Your answer" value="'+esc(G.lastVal)+'"><button class="primary" id="chk">Check</button></div>';
+  return '<div class="row"><input id="ans" type="text" readonly inputmode="none" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="done" name="dart-answer" placeholder="?" aria-label="Your answer" value="'+esc(G.lastVal)+'"><button class="primary" id="chk">Check</button></div>'+keypadHTML();
 }
 function fbH(){return G.fb?'<div class="fb '+G.fbc+'">'+G.fb+'</div>':'';}
 function helpH(txt){
@@ -1451,8 +1476,7 @@ function renderPanel(){
   p.innerHTML=gameOk()+earnHTML()+(S.mode==='501'?panel501():panelCR());
   var q=function(s){return p.querySelector(s);};
   var chk=q('#chk');if(chk)chk.onclick=onCheck;
-  var ans=q('#ans');
-  if(ans){ans.onkeydown=function(e){if(e.key==='Enter')onCheck();};try{ans.focus({preventScroll:true});ans.select();}catch(e){}}
+  bindKeypad(p,onCheck);
   var hb=q('#hintbtn');if(hb)hb.onclick=function(){G.hint=!G.hint;if(G.hint)G.hintUsed=true;renderPanel();};
   var rv=q('#reveal');if(rv)rv.onclick=reveal;
   var zr=q('#zero');if(zr)zr.onclick=function(){var a=q('#ans');if(a)a.value='0';onCheck();};
