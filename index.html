@@ -316,7 +316,7 @@ function keypadHTML(){
   var keys=['1','2','3','4','5','6','7','8','9','C','0','⌫'];
   return '<div class="keypad" role="group" aria-label="Number pad">'+keys.map(function(k){return '<button type="button" data-k="'+k+'" aria-label="'+(k==='⌫'?'Backspace':k==='C'?'Clear':k)+'">'+k+'</button>';}).join('')+'</div>';
 }
-var BUILD='Oct 15, build 4';
+var BUILD='Oct 15, build 5';
 var KP_ENTER=null;
 function keyPress(k){
   var a=document.querySelector('#ans');if(!a)return;
@@ -1048,7 +1048,7 @@ function practiceHTML(){
   var h=ch([['cd','Question '+(C.qi+1)+' of '+C.qs.length],[q.small?'ch-big sm':'ch-big',q.big||q.label],['cd','Say it out loud, then type the answer.']],true);
   h+='<div class="card">';
   if(!C.done){
-    h+='<div class="row"><output id="ans" class="ansbox" role="textbox" tabindex="0" aria-label="Your answer">'+esc(C.val)+'</output><button class="primary" id="chk">Check</button></div>'+keypadHTML();
+    h+='<div class="row"><output id="ans" class="ansbox" role="textbox" tabindex="0" aria-label="Your answer"></output><button class="primary" id="chk">Check</button></div>'+keypadHTML();
     if(C.fb)h+='<div class="fb '+C.fbc+'">'+C.fb+'</div>';
     h+='<div class="row2">';
     if(q.hints.length>C.hints)h+='<button class="ghost" id="hintbtn">'+(C.hints?'Another hint':'Need a hint?')+'</button>';
@@ -1283,7 +1283,7 @@ function wrongAns(v,exp){
   G.fb='Not quite. '+v+' is a bit '+(v>exp?'high':'low')+'. Try again.';
 }
 function inputRow(){
-  return '<div class="row"><output id="ans" class="ansbox" role="textbox" tabindex="0" aria-label="Your answer">'+esc(G.lastVal)+'</output><button class="primary" id="chk">Check</button></div>'+keypadHTML();
+  return '<div class="row"><output id="ans" class="ansbox" role="textbox" tabindex="0" aria-label="Your answer"></output><button class="primary" id="chk">Check</button></div>'+keypadHTML();
 }
 function fbH(){return G.fb?'<div class="fb '+G.fbc+'">'+G.fb+'</div>':'';}
 function helpH(txt){
