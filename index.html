@@ -6,9 +6,6 @@
 <meta name="color-scheme" content="light">
 <meta name="theme-color" content="#0f3322">
 <title>Dart Smart</title>
-<link rel="apple-touch-icon" href="icon-v2.png">
-<link rel="icon" type="image/png" href="icon-v2.png">
-<meta name="apple-mobile-web-app-title" content="Dart Smart">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@600;700&family=Bevan&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
@@ -95,8 +92,9 @@ details.card p{margin:10px 0 0}
 .mini b{display:block;font:700 26px/1 var(--num)}
 .mini span{font-size:13px;color:var(--dim)}
 .turn{text-align:center;font:700 24px var(--num);color:var(--gold);margin:4px 0 0}
-.boardbox{width:100%;max-width:340px;margin:6px auto 0}
-.boardbox svg{display:block;width:100%;height:auto;filter:drop-shadow(0 8px 12px rgba(0,0,0,.45))}
+.boardbox{position:relative;width:100%;max-width:340px;margin:6px auto 0}
+.aimzone{position:absolute;inset:0;border-radius:50%;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;cursor:crosshair;z-index:2}
+.boardbox svg{pointer-events:none;display:block;width:100%;height:auto;filter:drop-shadow(0 8px 12px rgba(0,0,0,.45))}
 .dart{transform-box:fill-box;transform-origin:center;animation:land .35s cubic-bezier(.2,.9,.3,1) both}
 @keyframes land{from{opacity:0;transform:scale(3.2)}to{opacity:1;transform:scale(1)}}
 @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
@@ -202,7 +200,21 @@ details.card p{margin:10px 0 0}
 .earnbig.pop{animation:popb .75s cubic-bezier(.2,1.5,.4,1)}
 @keyframes popb{0%{transform:scale(.35);opacity:0}60%{transform:scale(1.2);opacity:1}100%{transform:scale(1)}}
 .thad{font-size:11px;font-weight:600;color:var(--ink2);height:14px;white-space:nowrap}
-.tile.blk{background:#f2d9d4;border-color:var(--bad)}
+.tile.blk{border-color:#d8a9a1}
+.topp .oc{display:inline-block;background:var(--bad);color:#fff;border-radius:4px;padding:0 4px;font:700 11px/14px var(--num);letter-spacing:.3px;text-transform:uppercase}
+.mkstrip .tile{padding:5px 2px}
+.mkstrip .tg{height:26px;line-height:26px}
+.mkstrip .tcnt{font:700 15px/1.2 var(--num);color:var(--ink2)}
+.mkstrip .tcnt b{color:var(--good)}
+.mkcap{font-size:13px;color:var(--ink2);margin:0 0 6px;font-weight:600}
+.boom{display:flex;align-items:center;gap:12px;background:#fbe3dc;border:3px solid var(--bad);border-radius:12px;padding:10px 12px;margin:0 0 10px;animation:shake .5s}
+.boom svg{width:88px;height:88px;flex:none;animation:boomin .6s cubic-bezier(.2,1.6,.4,1) both}
+.boom b{display:block;font:400 36px/1 var(--disp);color:var(--bad)}
+.boom span{font-size:16px;color:var(--ink)}
+@keyframes boomin{0%{transform:scale(.1) rotate(-30deg);opacity:0}60%{transform:scale(1.25) rotate(8deg);opacity:1}100%{transform:scale(1) rotate(0)}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
+@keyframes popin{0%{transform:scale(.4);opacity:0}60%{transform:scale(1.25);opacity:1}100%{transform:scale(1)}}
+@media (prefers-reduced-motion:reduce){.boom,.boom svg{animation:none}}
 .blkstrip{color:var(--bad);font-weight:600;font-size:14px;margin:6px 0}
 .howbtn .casesvg{display:block;margin:0 auto 4px}
 .oppline{background:var(--paper2);border-left:5px solid var(--wood);padding:8px 10px;border-radius:6px;margin:0 0 10px;font-size:16px}
@@ -227,7 +239,7 @@ details.card p{margin:10px 0 0}
 .numgrid button:disabled,.numrow button:disabled{opacity:.4}
 .okbadge{display:flex;align-items:center;gap:8px;font:700 30px/1 var(--num);color:var(--good);margin:0 0 8px}
 .okbadge svg{width:30px;height:30px;flex:none}
-.okbadge.pop{animation:popin .5s cubic-bezier(.2,1.7,.4,1) both}
+.okbadge.pop{transform-origin:left center;animation:popin .5s cubic-bezier(.2,1.7,.4,1) both}
 .gal{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
 .gal>div{text-align:center;font-size:14px;font-weight:600;line-height:1.2}
 .gal .mascot{display:block;margin:0 auto 4px}
@@ -236,6 +248,8 @@ details.card p{margin:10px 0 0}
 .keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0 6px}
 .keypad button{min-height:52px;border:2px solid var(--wood-lt);border-radius:10px;background:var(--paper2);color:var(--ink);font:700 28px var(--num);padding:0;touch-action:manipulation;-webkit-user-select:none;user-select:none}
 .keypad button:active{background:var(--burg);color:var(--cream)}
+.keypad .bust{grid-column:1/-1;min-height:50px;background:#f3d6d1;border-color:var(--bad);color:var(--bad);font-size:28px}
+.keypad .bust:active{background:var(--bad);color:#fff}
 .row input[readonly]{caret-color:transparent}
 .ansbox{flex:1;min-width:0;display:flex;align-items:center;justify-content:center;font:700 34px var(--num);border:2px solid var(--wood);border-radius:8px;background:#fffaf0;color:var(--ink);min-height:54px;padding:2px 10px;-webkit-user-select:none;user-select:none}
 .ansbox:empty::before{content:"?";color:#b7a98f}
@@ -253,7 +267,7 @@ var $=function(s){return document.querySelector(s);};
 var esc=function(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});};
 var nm=function(n){return n===25?'Bull':String(n);};
 
-var S={mode:'501',diff:'medium',start:501,players:1,dIn:false,dOut:true,names:['Player 1','Player 2']};
+var S={mode:'501',diff:'medium',start:501,players:1,dIn:false,dOut:true,thrower:'computer',names:['Player 1','Player 2']};
 try{var saved=JSON.parse(localStorage.getItem('dmt2')||'null');if(saved){S=Object.assign(S,saved);}}catch(e){}
 if(!Array.isArray(S.names)||S.names.length<2)S.names=['Player 1','Player 2'];
 S.view='home';
@@ -312,11 +326,11 @@ function praiseBanner(){
   var pop=G.praiseFresh;G.praiseFresh=false;
   return '<div class="praise'+(pop?' pop':'')+'">'+mascot(G.praise.kind)+'<div><b>'+esc(G.praise.title)+'</b><span>'+esc(G.praise.sub)+'</span></div></div>';
 }
-function keypadHTML(){
+function keypadHTML(withBust){
   var keys=['1','2','3','4','5','6','7','8','9','C','0','⌫'];
-  return '<div class="keypad" role="group" aria-label="Number pad">'+keys.map(function(k){return '<button type="button" data-k="'+k+'" aria-label="'+(k==='⌫'?'Backspace':k==='C'?'Clear':k)+'">'+k+'</button>';}).join('')+'</div>';
+  return '<div class="keypad" role="group" aria-label="Number pad">'+keys.map(function(k){return '<button type="button" data-k="'+k+'" aria-label="'+(k==='⌫'?'Backspace':k==='C'?'Clear':k)+'">'+k+'</button>';}).join('')+(withBust?'<button type="button" class="bust" data-k="BUST">Bust!</button>':'')+'</div>';
 }
-var BUILD='Oct 15, build 5';
+var BUILD='Oct 16, build 7';
 var KP_ENTER=null;
 function keyPress(k){
   var a=document.querySelector('#ans');if(!a)return;
@@ -328,7 +342,7 @@ function keyPress(k){
 function bindKeypad(root,onEnter){
   KP_ENTER=onEnter;
   var kb=root.querySelectorAll('.keypad button');
-  for(var i=0;i<kb.length;i++){(function(b){b.onclick=function(){keyPress(b.dataset.k);};})(kb[i]);}
+  for(var i=0;i<kb.length;i++){(function(b){b.onclick=function(){if(b.dataset.k==='BUST')declareBust501();else keyPress(b.dataset.k);};})(kb[i]);}
   var a=root.querySelector('#ans');
   if(a&&a.value&&a.dataset)a.dataset.fresh='1';
 }
@@ -430,7 +444,7 @@ function classify(x,y){
   o.x=x;o.y=y;return o;
 }
 function boardSVG(darts){
-  var s='<svg viewBox="-200 -200 400 400" role="img" aria-label="Dartboard with the darts that just landed">';
+  var s='<svg id="board" viewBox="-200 -200 400 400" role="img" aria-label="Dartboard with the darts that just landed">';
   s+='<circle r="199" fill="#121212"/>';
   for(var i=0;i<20;i++){
     var a1=i*18-9,a2=i*18+9,dark=i%2===0;
@@ -452,6 +466,7 @@ function boardSVG(darts){
     s+='<g class="dart" style="animation-delay:'+(i*0.5)+'s"><circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="8" fill="#ffd23f" stroke="#111" stroke-width="1.6"/>';
     s+='</g>';
   });
+  s+='<g id="darts-live"></g><g id="ret" style="display:none;pointer-events:none"><circle id="retring" r="30" fill="rgba(255,255,255,.08)" stroke="#fff" stroke-width="1.6" stroke-dasharray="5 4"/><path d="M-12 0H-4M4 0H12M0 -12V-4M0 4V12" stroke="#ffd23f" stroke-width="2" stroke-linecap="round"/><circle r="1.8" fill="#ffd23f"/></g>';
   return s+'</svg>';
 }
 
@@ -645,13 +660,14 @@ function optsHTML(){
   if(S.players===2){
     h+='<div class="lbl">Names</div><div class="names"><input id="n0" maxlength="14" autocomplete="off" autocorrect="off" spellcheck="false" name="dart-p1" aria-label="Player 1 name" value="'+esc(S.names[0])+'"><input id="n1" maxlength="14" autocomplete="off" autocorrect="off" spellcheck="false" name="dart-p2" aria-label="Player 2 name" value="'+esc(S.names[1])+'"></div>';
   }
+  h+='<div class="lbl">Who throws?</div>'+segBtns('segThrow',[['computer','Computer throws'],['me','I throw']],S.thrower);
   if(is501){
     h+='<div class="lbl">Starting score</div>'+segBtns('segStart',[[501,'501'],[301,'301'],[101,'101 (quick)']],S.start);
     h+='<div class="lbl">Getting started</div>'+segBtns('segIn',[[0,'Straight in'],[1,'Double in']],S.dIn?1:0);
     h+='<div class="lbl">Finishing</div>'+segBtns('segOut',[[0,'Straight out'],[1,'Double out']],S.dOut?1:0);
   }
   h+='<div class="lbl">Difficulty</div>'+segBtns('segDiff',[['easy','Easy'],['medium','Medium'],['hard','Hard']],S.diff);
-  h+='<p class="muted sm" style="margin:8px 0 0">'+diffText[S.diff]+'</p>';
+  h+='<p class="muted sm" style="margin:8px 0 0">'+(S.thrower==='me'?{easy:'A small wobble. Wait for the ring to shrink and you’ll land close to where you aim.',medium:'A medium wobble. Timing matters.',hard:'A big wobble. Even a good release can drift.'}[S.diff]:diffText[S.diff])+'</p>';
   h+='<button class="primary wide" id="go">Start game</button></div>';
   var how;
   if(is501){
@@ -681,6 +697,7 @@ function bindOpts(){
   wire('segIn',function(v){S.dIn=+v===1;});
   wire('segOut',function(v){S.dOut=+v===1;});
   wire('segDiff',function(v){S.diff=v;});
+  wire('segThrow',function(v){S.thrower=v;});
   [0,1].forEach(function(i){var el=$('#n'+i);if(el)el.oninput=function(){S.names[i]=el.value;saveS();};});
   $('#back').onclick=function(){S.view='home';render();window.scrollTo(0,0);};
   $('#go').onclick=function(){S.sk=false;newGame();};
@@ -1117,7 +1134,7 @@ function mkDart(n,mult){
   return {kind:'seg',num:n,mult:mult,value:n*mult,label:(mult===3?'T':mult===2?'D':'S')+n,dbl:mult===2};
 }
 function turn501From(p,darts){
-  var running=p.rem,isIn=p.isIn,bust=false,won=false,counted=0,dOut=G.rules.dOut,used=[];
+  var running=p.rem,isIn=p.isIn,bust=false,won=false,counted=0,dOut=G.rules.dOut,used=[],bi=-1,bustRun=0,bustNr=0;
   for(var i=0;i<darts.length;i++){
     var h=darts[i];used.push(h);
     if(!isIn){
@@ -1126,11 +1143,11 @@ function turn501From(p,darts){
     }
     h.counts=true;counted+=h.value;
     var nr=running-h.value;
-    if(nr<0||(dOut&&(nr===1||(nr===0&&!h.dbl)))){bust=true;break;}
+    if(nr<0||(dOut&&(nr===1||(nr===0&&!h.dbl)))){bust=true;bi=i;bustRun=running;bustNr=nr;break;}
     running=nr;
     if(nr===0){won=true;break;}
   }
-  return {darts:used,total:counted,bust:bust,won:won,startRem:p.rem,startIn:p.isIn,newScore:bust?p.rem:p.rem-counted,newIn:bust?p.isIn:isIn};
+  return {darts:used,total:counted,bust:bust,won:won,startRem:p.rem,startIn:p.isIn,newScore:bust?p.rem:p.rem-counted,newIn:bust?p.isIn:isIn,bi:bi,bustRun:bustRun,bustNr:bustNr};
 }
 function crTurnFrom(darts){
   var p=P(),exp={};CR.forEach(function(n){exp[n]=0;});
@@ -1212,11 +1229,117 @@ function bindSk(){
   $('#go').onclick=function(){S.sk=true;newGame();};
 }
 
+/* ---------- throw mode (you throw) ---------- */
+var TM={aim:{x:0,y:0},pt:null,t0:0,ph:0,aiming:false};
+var TM_AMP={easy:22,medium:40,hard:62};
+function tmSway(t){
+  var A=TM_AMP[S.diff]||40,amp=A*(.5+.5*Math.abs(Math.sin(t*.0012)));
+  return {x:amp*(Math.sin(t*.0031)+.55*Math.sin(t*.0073+1.3))/1.55,y:amp*(Math.cos(t*.0027+.7)+.55*Math.cos(t*.0069+2.1))/1.55,amp:amp};
+}
+function tmAimFrom(e){
+  var r=$('#board').getBoundingClientRect(),off=e.pointerType==='touch'?70:0;
+  var x=(e.clientX-r.left)/r.width*400-200,y=(e.clientY-off-r.top)/r.height*400-200,d=Math.hypot(x,y);
+  if(d>165){x*=165/d;y*=165/d;}
+  TM.aim={x:x,y:y};
+}
+function tmFrame(now){
+  if(!TM.aiming)return;
+  var s=tmSway(now-TM.t0+TM.ph),px=TM.aim.x+s.x,py=TM.aim.y+s.y,dd=Math.hypot(px,py);
+  if(dd>168){px*=168/dd;py*=168/dd;}
+  TM.pt={x:px,y:py};
+  var ret=$('#ret');
+  if(ret){ret.setAttribute('transform','translate('+px.toFixed(1)+','+py.toFixed(1)+')');$('#retring').setAttribute('r',Math.max(5,s.amp).toFixed(1));}
+  requestAnimationFrame(tmFrame);
+}
+function tmStart(e){
+  if(!G||!G.throw||G.step!=='aim'||TM.aiming)return;
+  e.preventDefault();
+  try{$('#aimzone').setPointerCapture(e.pointerId);}catch(x){}
+  TM.aiming=true;TM.t0=performance.now();TM.ph=Math.random()*10000;TM.pt=null;
+  tmAimFrom(e);$('#ret').style.display='';
+  requestAnimationFrame(tmFrame);
+}
+function tmMove(e){if(TM.aiming){e.preventDefault();tmAimFrom(e);}}
+function tmEnd(e,cancel){
+  if(!TM.aiming)return;
+  TM.aiming=false;var ret=$('#ret');if(ret)ret.style.display='none';
+  if(cancel||!TM.pt)return;
+  var lx=TM.pt.x+gauss()*2.5,ly=TM.pt.y+gauss()*2.5,ld=Math.hypot(lx,ly);
+  if(ld>169){lx*=169/ld;ly*=169/ld;}
+  tmThrow(lx,ly);
+}
+function tmThrow(x,y){
+  if(G.entered.length>=3)return;
+  var h=classify(x,y);G.entered.push(h);
+  var rr=Math.hypot(x,y),mx=x,my=y;if(rr>192){mx*=192/rr;my*=192/rr;}
+  var live=$('#darts-live');
+  if(live)live.insertAdjacentHTML('beforeend','<g class="dart"><circle cx="'+mx.toFixed(1)+'" cy="'+my.toFixed(1)+'" r="8" fill="#ffd23f" stroke="#111" stroke-width="1.6"/></g>');
+  if(S.mode==='501'&&G.entered.length<3){
+    var et=turn501From(P(),G.entered.slice());
+    if(et.bust||et.won){
+      G.turn=et;G.ok=false;G.fb='';G.fbc='';
+      if(et.bust)G.step='bust';
+      else{P().rem=0;P().isIn=true;G.over=true;G.winner=G.cur;G.step='won';if(G.rewards)rewardGame();}
+      var c0=$('#chips');if(c0)c0.innerHTML=chipsHTML(et.darts);
+      var az0=$('#aimzone');if(az0&&az0.parentNode)az0.parentNode.removeChild(az0);
+      renderPanel();return;
+    }
+  }
+  if(G.entered.length>=3){
+    var p=P(),darts=G.entered.slice();
+    if(S.mode==='501'){G.turn=turn501From(p,darts);G.step='total';}
+    else{G.turn=crTurnFrom(darts);G.step='marks';G.add={};CR.forEach(function(n){G.add[n]=0;});}
+    var c=$('#chips');if(c)c.innerHTML=chipsHTML(G.turn.darts);
+    var az=$('#aimzone');if(az&&az.parentNode)az.parentNode.removeChild(az);
+  }else{updChips();}
+  renderPanel();
+}
+function tmBind(){
+  var az=$('#aimzone');if(!az)return;
+  az.addEventListener('pointerdown',tmStart);
+  az.addEventListener('pointermove',tmMove);
+  az.addEventListener('pointerup',function(e){tmEnd(e,false);});
+  az.addEventListener('pointercancel',function(e){tmEnd(e,true);});
+  az.addEventListener('contextmenu',function(e){e.preventDefault();});
+}
+function marksStrip(){
+  var p=P(),o=O(),add={};CR.forEach(function(n){add[n]=0;});
+  G.entered.forEach(function(d){var cm=crMarks(d);if(cm[0])add[cm[0]]+=cm[1];});
+  return '<div class="mkcap">Your marks. Aim for a number that isn’t ⊗ yet.</div><div class="tiles mkstrip">'+CR.map(function(n){
+    var tot=p.marks[n]+add[n],blk=o?o.marks[n]>=3:false,opp;
+    if(blk)opp='<div class="topp"><span class="oc">closed</span></div>';
+    else if(o)opp='<div class="topp">opp '+GL[Math.min(3,o.marks[n])]+'</div>';
+    else opp='<div class="topp"></div>';
+    return '<div class="tile'+(blk?' blk':'')+'"><div class="tnum">'+nm(n)+'</div><div class="tg">'+GL[Math.min(3,tot)]+'</div>'+opp+'<div class="tcnt">'+(add[n]?'<b>+'+add[n]+'</b> ':'')+Math.min(tot,9)+'</div></div>';
+  }).join('')+'</div>';
+}
+function aimHTML(){
+  var n=G.entered.length;
+  return '<p class="q">'+(G.players.length===2?esc(P().name)+': ':'')+'Dart '+Math.min(n+1,3)+' of 3</p>'+(S.mode==='cricket'?marksStrip():'')+'<p class="muted sm" style="margin:0">Press and hold on the board, slide to aim, then let go to throw. The dashed ring shows how much you’ll wobble. It breathes in and out, so let go when it’s small. Touch outside the board to scroll.</p>';
+}
+function bustWhy(t){
+  var d=t.darts[t.bi],ends=t.bustNr<0?'below zero':t.bustNr===1?'you on 1, and you can’t finish from 1':'on zero, but the last dart has to be a double';
+  var lead=t.bi>0?'You were on '+t.bustRun+'. ':'You started on '+t.startRem+'. ';
+  return lead+d.label+' ('+d.value+') would leave '+(t.bustNr<0?'you ':'')+ends+'. Your score goes back to '+t.startRem+'.';
+}
+function boomSVG(){
+  var pts=[],i;for(i=0;i<20;i++){var r=i%2?20:34,a=i*Math.PI/10;pts.push((40+r*Math.cos(a)).toFixed(1)+','+(40+r*Math.sin(a)).toFixed(1));}
+  var p2=[];for(i=0;i<20;i++){var r2=i%2?11:21,a2=i*Math.PI/10+.15;p2.push((40+r2*Math.cos(a2)).toFixed(1)+','+(40+r2*Math.sin(a2)).toFixed(1));}
+  return '<svg viewBox="0 0 80 80" aria-hidden="true"><polygon points="'+pts.join(' ')+'" fill="#f2552c" stroke="#b83a17" stroke-width="2" stroke-linejoin="round"/><polygon points="'+p2.join(' ')+'" fill="#ffc93c"/><circle cx="34" cy="38" r="2.4" fill="#3a2a10"/><circle cx="46" cy="38" r="2.4" fill="#3a2a10"/><path d="M32 49Q40 42 48 49" fill="none" stroke="#3a2a10" stroke-width="2.4" stroke-linecap="round"/></svg>';
+}
+function boomHTML(t){return '<div class="boom">'+boomSVG()+'<div><b>Bust!</b><span>'+esc(bustWhy(t))+'</span></div></div>';}
+function declareBust501(){
+  var t=G.turn;
+  if(t.bust){resolve(true);finish501();}
+  else{G.attempts++;G.fbc='no';G.fb='That one isn’t a bust. Subtract your total from your score and see where you land.';G.ok=false;}
+  renderPanel();
+}
+
 /* ---------- game flow ---------- */
 function newGame(){
   var np=S.players;
   G={round:0,cur:0,players:[],attempts:0,hint:false,hintUsed:false,fb:'',fbc:'',lastVal:'',wrong:[],note:'',oppMsg:'',
-     over:false,winner:-1,rules:{dIn:S.dIn,dOut:S.dOut},rewards:np===1&&!S.sk,sk:!!S.sk,skAuto:!!S.skAuto,turnEarn:0,gameEarn:0,msgs:[]};
+     over:false,winner:-1,rules:{dIn:S.dIn,dOut:S.dOut},rewards:np===1&&!S.sk,sk:!!S.sk,throw:S.thrower==='me'&&!S.sk,skAuto:!!S.skAuto,turnEarn:0,gameEarn:0,msgs:[]};
   for(var i=0;i<np;i++){
     var marks={};CR.forEach(function(n){marks[n]=0;});
     var nmv=np===2?((S.names[i]||'').trim()||'Player '+(i+1)):'You';
@@ -1230,6 +1353,7 @@ function startTurn(first){
   else{G.cur=(G.cur+1)%G.players.length;if(G.cur===0)G.round++;}
   G.attempts=0;G.hint=false;G.hintUsed=false;G.fb='';G.fbc='';G.lastVal='';G.wrong=[];G.note='';G.oppMsg='';G.turnEarn=0;G.praise=null;G.ok=false;G.msgs=[];
   if(G.sk){G.turn=null;G.step='enter';G.entered=[];G.mult=G.mult||'S';}
+  else if(G.throw){G.turn=null;G.step='aim';G.entered=[];TM.aiming=false;}
   else if(S.mode==='501'){G.turn=gen501(P());G.step='total';}
   else{G.turn=genCricket();G.step='marks';G.add={};CR.forEach(function(n){G.add[n]=0;});}
   render();
@@ -1244,12 +1368,13 @@ function render(){
     '<div class="rules">'+rulesLine()+'</div>'+
     '<div class="hud'+(np===2||G.botP?' two':'')+'" id="hud"></div>'+
     (np===2?'<div class="turn">'+esc(P().name)+'\'s turn</div>':'')+
-    (G.sk?'':'<div class="boardbox">'+boardSVG(G.turn.darts)+'</div>'+
+    (G.sk?'':'<div class="boardbox">'+(G.throw&&G.step==='aim'?'<div class="aimzone" id="aimzone"></div>':'')+boardSVG(G.turn?G.turn.darts:[])+'</div>'+
     '<div class="legend"><span>S = single</span><span>D = double (×2)</span><span>T = triple (×3)</span></div>')+
-    '<div class="chips" id="chips">'+(G.sk?skChips():chipsHTML(G.turn.darts))+'</div>'+
+    '<div class="chips" id="chips">'+(G.sk||!G.turn?skChips():chipsHTML(G.turn.darts))+'</div>'+
     '<div class="card" id="panel"></div>';
   $('#menu').onclick=toMenu;
   renderPanel();
+  if(G.throw&&G.step==='aim')tmBind();
 }
 function hud(){
   var np=G.players.length,is501=S.mode==='501',two=np===2||!!G.botP;
@@ -1282,8 +1407,8 @@ function wrongAns(v,exp){
   G.attempts++;G.fbc='no';
   G.fb='Not quite. '+v+' is a bit '+(v>exp?'high':'low')+'. Try again.';
 }
-function inputRow(){
-  return '<div class="row"><output id="ans" class="ansbox" role="textbox" tabindex="0" aria-label="Your answer"></output><button class="primary" id="chk">Check</button></div>'+keypadHTML();
+function inputRow(withBust){
+  return '<div class="row"><output id="ans" class="ansbox" role="textbox" tabindex="0" aria-label="Your answer"></output><button class="primary" id="chk">Check</button></div>'+keypadHTML(withBust);
 }
 function fbH(){return G.fb?'<div class="fb '+G.fbc+'">'+G.fb+'</div>':'';}
 function helpH(txt){
@@ -1303,21 +1428,26 @@ function nextBtn(){
 function overButtons(){return '<div class="row2"><button class="primary" id="again">Play again</button><button class="ghost" id="menu2">Menu</button></div>';}
 function bustRules(){
   return G.rules.dOut
-    ?'Bust rules: you can\'t go below 0, can\'t be left on 1, and must finish on a double. After a bust your score goes back to what it was.'
-    :'Bust rule: going below 0 is a bust, and your score goes back to what it was. Land exactly on 0 to win.';
+    ?'Bust rules: you can\'t go below 0, can\'t be left on 1, and must finish on a double. After a bust your score goes back to what it was. If it’s a bust, tap Bust!'
+    :'Bust rule: going below 0 is a bust, and your score goes back to what it was. Land exactly on 0 to win. If it’s a bust, tap Bust!';
 }
 
 /* ---------- 501 panel ---------- */
 function panel501(){
   var t=G.turn,p=P(),h='';
-  if(G.note)h+='<div class="note ok">'+G.note+'</div>';
-  if(G.step==='total'){
+  if(G.note&&G.step!=='score')h+='<div class="note ok">'+G.note+'</div>';
+  if(G.step==='bust'){
+    h+=boomHTML(t)+'<button class="primary wide" id="next">'+(G.players.length===2?'Pass to '+esc(G.players[1-G.cur].name):'Throw again')+'</button>';
+  }else if(G.step==='won'){
+    var hw=G.rules.dOut?' on a double':'';
+    h+='<div class="res win">'+(G.players.length===2?esc(p.name)+' wins! Checked out'+hw+'.':'Checkout! You finished'+hw+'.')+'</div><p>You finished on '+esc(t.darts[t.darts.length-1].label)+'.</p>'+summaryHTML()+gameEarnHTML()+overButtons();
+  }else if(G.step==='total'){
     h+='<p class="q">'+(t.startIn?'Add up the darts. What\'s the round total?':'You haven\'t doubled in yet, so only darts from your first double count. What\'s the round total?')+'</p>';
     h+=inputRow()+fbH()+helpH(t.darts.map(describe501).map(esc).join('<br>'));
   }else if(G.step==='score'){
-    h+='<p class="q">You started this round on <b>'+t.startRem+'</b>. What\'s your score now?</p>';
+    h+='<p class="q">You scored <b>'+t.total+'</b> points! You started this round on <b>'+t.startRem+'</b>. How many points do you have now?</p>';
     h+='<p class="muted sm">'+bustRules()+'</p>';
-    h+=inputRow()+fbH()+helpH(t.startRem+' − '+t.total+' = ?<br>Then check the bust rules.');
+    h+=inputRow(true)+fbH()+helpH(t.startRem+' − '+t.total+' = ?<br>Then check the bust rules.');
   }else{
     var naive=t.startRem-t.total,ar;
     if(t.bust){
@@ -1358,17 +1488,17 @@ function finish501(){
 
 /* ---------- cricket panel ---------- */
 function blkStrip(){
-  if(S.diff!=='easy')return '';
   var l=CR.filter(function(n){return oppBlocked(n);});
   return l.length?'<p class="blkstrip">No points on '+l.map(nm).join(', ')+' because the opponent closed '+(l.length>1?'them':'it')+'.</p>':'';
 }
 function tilesHTML(locked){
   var p=P(),o=O();
   return '<div class="tiles">'+CR.map(function(n){
-    var bad=G.wrong.indexOf(n)>=0,opp,blk=o?o.marks[n]>=3:false,strong=blk&&S.diff!=='hard';
-    if(o){var m=o.marks[n];opp='<div class="topp'+(m>=3?' cl':'')+'">'+(strong?'no pts':'opp '+GL[Math.min(3,m)])+'</div>';}
-    else opp='<div class="topp cl">'+(blk?(strong?'no pts':'opp ⊗'):'')+'</div>';
-    return '<div class="tile'+(bad?' bad':'')+(strong?' blk':'')+'"><div class="tnum">'+nm(n)+'</div><div class="tg">'+GL[Math.min(3,p.marks[n]+G.add[n])]+'</div><div class="thad">had '+p.marks[n]+'</div>'+opp+
+    var bad=G.wrong.indexOf(n)>=0,opp,blk=o?o.marks[n]>=3:false;
+    if(blk)opp='<div class="topp"><span class="oc">closed</span></div>';
+    else if(o)opp='<div class="topp">opp '+GL[Math.min(3,o.marks[n])]+'</div>';
+    else opp='<div class="topp"></div>';
+    return '<div class="tile'+(bad?' bad':'')+(blk?' blk':'')+'"><div class="tnum">'+nm(n)+'</div><div class="tg">'+GL[Math.min(3,p.marks[n]+G.add[n])]+'</div><div class="thad">had '+p.marks[n]+'</div>'+opp+
       (locked?'':'<button data-n="'+n+'" data-d="1" aria-label="Add a mark on '+nm(n)+'">+</button>')+
       '<div class="tadd">'+(p.marks[n]+G.add[n])+'</div>'+
       (locked?'':'<button data-n="'+n+'" data-d="-1" aria-label="Remove a mark on '+nm(n)+'">−</button>')+'</div>';
@@ -1378,7 +1508,7 @@ function panelCR(){
   var t=G.turn,p=P(),h='';
   if(G.step==='marks'){
     h+='<p class="q">Add your new marks. Each counter starts at what you already have, so tap + for every mark these three darts earned.</p>'+tilesHTML(false)+blkStrip();
-    h+='<p class="muted sm">⊗ means closed (3 marks or more). “had” is what you started the round with. Below each symbol is your opponent’s; red means they’ve closed it, so no points there.</p>';
+    h+='<p class="muted sm">⊗ means closed (3 marks or more). “had” is what you started the round with. Below each symbol is your opponent’s. A red “closed” tag means they’ve closed it, so no points there.</p>';
     h+='<button class="primary wide" id="chk">Check marks</button>'+fbH()+helpH(t.darts.map(describeCR).map(esc).join('<br>'));
   }else if(G.step==='points'){
     h+=tilesHTML(true)+blkStrip()+'<p class="q">How many points did this round score?</p>';
@@ -1401,10 +1531,11 @@ function panelCR(){
     h+='<div class="res">Round score: <b>'+t.points+'</b></div>';
     if(lines)h+='<ul class="lines">'+lines+'</ul>';
     if(G.oppMsg)h+='<p class="oppline">'+esc(G.oppMsg)+'</p>';
+    var oo=O();if(!G.over&&closedAll(p)&&oo&&p.score<oo.score)h+='<p class="oppline">You’ve closed every number, but you’re behind on points ('+p.score+' to '+oo.score+'). Score on numbers your opponent hasn’t closed to take the lead and win.</p>';
     if(G.over){
       if(G.botP){
         if(G.winner===0)h+='<div class="res win">You win!</div>';
-        else if(G.winner===-3)h+='<div class="res">Good game! The opponent finished first.</div>';
+        else if(G.winner===-3)h+='<div class="res">'+(closedAll(p)?'You closed every number, but the opponent finished with more points ('+G.botP.score+' to '+p.score+'). You need to close everything while level or ahead on points.':'Good game! The opponent finished first.')+'</div>';
         else h+='<div class="res">It’s a tie!</div>';
       }else if(G.players.length===1)h+='<div class="res win">All seven numbers closed!</div>';
       else if(G.winner>=0)h+='<div class="res win">'+esc(G.players[G.winner].name)+' wins!</div>';
@@ -1480,6 +1611,7 @@ function renderPanel(){
   hud();
   var p=$('#panel');
   if(G.sk&&G.step==='enter'){p.innerHTML=entryHTML();bindEntry(p);return;}
+  if(G.throw&&G.step==='aim'){p.innerHTML=aimHTML();return;}
   p.innerHTML=gameOk()+earnHTML()+(S.mode==='501'?panel501():panelCR());
   var q=function(s){return p.querySelector(s);};
   var chk=q('#chk');if(chk)chk.onclick=onCheck;
